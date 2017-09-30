@@ -1,0 +1,30 @@
+*.log
+*~
+.Xil/
+/*
+/*/
+!.gitignore
+!/*.xpr
+!/*.tcl
+!/*.txt
+!/*.sh
+!/*.bif
+!/*.wcfg
+!/*.srcs/
+!/*.runs/
+# in the *.runs folder:
+/*.runs/*
+/*.runs/*/
+!/*.runs/impl_*/
+/*.runs/impl_*/*
+/*.runs/impl_*/*/
+!/*.runs/impl_*/*.bit
+# in the *.srcs folder:
+*/.srcs/*
+!/*.srcs/sources_*/
+!/*.srcs/constrs_*/
+!/*.srcs/sources_*/
+# in ip cores folder only .xci files are needed. All the rest - trash!
+/*.srcs/sources_*/ip/*/*
+/*.srcs/sources_*/ip/*/*/
+!/*.srcs/sources_*/ip/*/*.xci
