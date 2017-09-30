@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="gray2bin_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="gray2bin_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="1947583332fs"></ZoomStartTime>
+      <ZoomEndTime time="2010483334fs"></ZoomEndTime>
+      <Cursor1Time time="1975683000fs"></Cursor1Time>
+   </zoom_setting>
+   <WVObjectSize size="3" />
+   <wave_markers>
+      <marker label="" time="46877599000" />
+   </wave_markers>
+   <wvobject type="logic" fp_name="/gray2bin_tb/dut/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/gray2bin_tb/datain_d2">
+      <obj_property name="ElementShortName">datain_d2[7:0]</obj_property>
+      <obj_property name="ObjectShortName">datain_d2[7:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/gray2bin_tb/dut/dataout">
+      <obj_property name="ElementShortName">dataout[7:0]</obj_property>
+      <obj_property name="ObjectShortName">dataout[7:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+</wave_config>
