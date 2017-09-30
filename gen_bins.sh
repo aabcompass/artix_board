@@ -1,0 +1,1 @@
+vivado -mode batch -source gen_bins.tcl project_1.xpr

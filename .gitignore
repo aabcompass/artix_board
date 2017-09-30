@@ -19,6 +19,7 @@
 /*.runs/impl_*/*
 /*.runs/impl_*/*/
 !/*.runs/impl_*/*.bit
+!/*.runs/impl_*/*.bin
 # in the *.srcs folder:
 */.srcs/*
 !/*.srcs/sources_*/
