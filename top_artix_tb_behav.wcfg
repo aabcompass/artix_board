@@ -3,34 +3,132 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="gray2bin_tb_behav.wdb" id="1">
+      <db_ref path="top_artix_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="gray2bin_tb" />
+            <top_module name="top_artix_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1947583332fs"></ZoomStartTime>
-      <ZoomEndTime time="2010483334fs"></ZoomEndTime>
-      <Cursor1Time time="1975683000fs"></Cursor1Time>
+      <ZoomStartTime time="8214600000fs"></ZoomStartTime>
+      <ZoomEndTime time="21574600001fs"></ZoomEndTime>
+      <Cursor1Time time="10874600000fs"></Cursor1Time>
    </zoom_setting>
-   <WVObjectSize size="3" />
+   <WVObjectSize size="28" />
    <wave_markers>
       <marker label="" time="46877599000" />
    </wave_markers>
-   <wvobject type="logic" fp_name="/gray2bin_tb/dut/clk">
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/clk_pri">
+      <obj_property name="ElementShortName">clk_pri</obj_property>
+      <obj_property name="ObjectShortName">clk_pri</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/zynq_frame_p">
+      <obj_property name="ElementShortName">zynq_frame_p</obj_property>
+      <obj_property name="ObjectShortName">zynq_frame_p</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/zynq_data_p">
+      <obj_property name="ElementShortName">zynq_data_p[11:0]</obj_property>
+      <obj_property name="ObjectShortName">zynq_data_p[11:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/zynq_clk_p">
+      <obj_property name="ElementShortName">zynq_clk_p</obj_property>
+      <obj_property name="ObjectShortName">zynq_clk_p</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/locked_i">
+      <obj_property name="ElementShortName">locked_i</obj_property>
+      <obj_property name="ObjectShortName">locked_i</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_clk_gtu_2_p">
+      <obj_property name="ElementShortName">ec_clk_gtu_2_p</obj_property>
+      <obj_property name="ObjectShortName">ec_clk_gtu_2_p</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_clk_gtu_3_p">
+      <obj_property name="ElementShortName">ec_clk_gtu_3_p</obj_property>
+      <obj_property name="ObjectShortName">ec_clk_gtu_3_p</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider30" type="divider">
+      <obj_property name="label">3072bits=64x6x8</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/aclk">
+      <obj_property name="ElementShortName">aclk</obj_property>
+      <obj_property name="ObjectShortName">aclk</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left">
+      <obj_property name="ElementShortName">readout_dataout_left[3071:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_dataout_left[3071:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_right">
+      <obj_property name="ElementShortName">readout_dataout_right[3071:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_dataout_right[3071:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left_dv">
+      <obj_property name="ElementShortName">readout_dataout_left_dv[5:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_dataout_left_dv[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/s_axis_tready">
+      <obj_property name="ElementShortName">s_axis_tready</obj_property>
+      <obj_property name="ObjectShortName">s_axis_tready</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider30" type="divider">
+      <obj_property name="label">8bits bus</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/m_axis_tvalid">
+      <obj_property name="ElementShortName">m_axis_tvalid</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/m_axis_tready">
+      <obj_property name="ElementShortName">m_axis_tready</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tready</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/m_axis_tdata">
+      <obj_property name="ElementShortName">m_axis_tdata[7:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tdata[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider39" type="divider">
+      <obj_property name="label">hf domain</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/m_axis_tdata_left_hf">
+      <obj_property name="ElementShortName">m_axis_tdata_left_hf[47:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tdata_left_hf[47:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/m_axis_tvalid_left_hf">
+      <obj_property name="ElementShortName">m_axis_tvalid_left_hf[5:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tvalid_left_hf[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider42" type="divider">
+      <obj_property name="label">Serdes</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/serdes_left/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/gray2bin_tb/datain_d2">
-      <obj_property name="ElementShortName">datain_d2[7:0]</obj_property>
-      <obj_property name="ObjectShortName">datain_d2[7:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/serdes_left/clkdiv">
+      <obj_property name="ElementShortName">clkdiv</obj_property>
+      <obj_property name="ObjectShortName">clkdiv</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/gray2bin_tb/dut/dataout">
-      <obj_property name="ElementShortName">dataout[7:0]</obj_property>
-      <obj_property name="ObjectShortName">dataout[7:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/serdes_left/datain">
+      <obj_property name="ElementShortName">datain[7:0]</obj_property>
+      <obj_property name="ObjectShortName">datain[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/serdes_left/OQ">
+      <obj_property name="ElementShortName">OQ</obj_property>
+      <obj_property name="ObjectShortName">OQ</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/zynq_frame_p">
+      <obj_property name="ElementShortName">zynq_frame_p</obj_property>
+      <obj_property name="ObjectShortName">zynq_frame_p</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/zynq_data_p">
+      <obj_property name="ElementShortName">zynq_data_p[11:0]</obj_property>
+      <obj_property name="ObjectShortName">zynq_data_p[11:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/zynq_clk_p">
+      <obj_property name="ElementShortName">zynq_clk_p</obj_property>
+      <obj_property name="ObjectShortName">zynq_clk_p</obj_property>
    </wvobject>
 </wave_config>

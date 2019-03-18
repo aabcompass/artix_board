@@ -18,8 +18,8 @@ entity pmt_readout_top is
 		-- ext io
 		x_data_pc: in std_logic_vector(7 downto 0); -- ext. pins
 		-- dataout
-		dataout :  out std_logic_vector(511 downto 0); -- all data in one vector in oreder to facilitate data re-mapping
-		dataout_dv : out std_logic;
+		dataout :  out std_logic_vector(511 downto 0) := (others => '0'); -- all data in one vector in oreder to facilitate data re-mapping
+		dataout_dv : out std_logic := '0';
 		-- states
 		readout_process_state, readout_dutycounter_process_state : out std_logic_vector(3 downto 0);
 		-- config module
@@ -97,7 +97,7 @@ architecture Behavioral of pmt_readout_top is
     signal readout_bit_counter : STD_LOGIC_VECTOR(5 downto 0) := (others => '0');
     signal delay_counter : STD_LOGIC_VECTOR(3 downto 0) := (others => '0');
     
-    signal dataout_unmapped : std_logic_vector(511 downto 0);
+    signal dataout_unmapped : std_logic_vector(511 downto 0)  := (others => '0');
     
     attribute keep : string;
     attribute keep of x_data_pc_d1 : signal is "true";

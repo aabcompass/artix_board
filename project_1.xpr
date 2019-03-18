@@ -3,11 +3,11 @@
 <!--                                                         -->
 <!-- Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="14" Path="/home/alx/xil_proj/pdm_artix_board/current/project_1.xpr">
+<Project Version="7" Minor="14" Path="/home/alx/xil_proj/artix_board/master/project_1.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="385e96bbf3a14ab8b06563c694bd1c0d"/>
-    <Option Name="Part" Val="xc7a15tcsg324-2"/>
+    <Option Name="Part" Val="xc7a35tcsg324-2"/>
     <Option Name="CompiledLibDir" Val="$PCACHEDIR/compile_simlib"/>
     <Option Name="CompiledLibDirXSim" Val=""/>
     <Option Name="CompiledLibDirModelSim" Val="$PCACHEDIR/compile_simlib/modelsim"/>
@@ -27,20 +27,20 @@
     <Option Name="IPUserFilesDir" Val="$PPRDIR/project_1.ip_user_files"/>
     <Option Name="IPStaticSourceDir" Val="$PPRDIR/project_1.ip_user_files/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
-    <Option Name="WTXSimLaunchSim" Val="5"/>
+    <Option Name="WTXSimLaunchSim" Val="10"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="9"/>
-    <Option Name="WTModelSimExportSim" Val="9"/>
-    <Option Name="WTQuestaExportSim" Val="9"/>
-    <Option Name="WTIesExportSim" Val="9"/>
-    <Option Name="WTVcsExportSim" Val="9"/>
-    <Option Name="WTRivieraExportSim" Val="9"/>
-    <Option Name="WTActivehdlExportSim" Val="9"/>
+    <Option Name="WTXSimExportSim" Val="30"/>
+    <Option Name="WTModelSimExportSim" Val="30"/>
+    <Option Name="WTQuestaExportSim" Val="30"/>
+    <Option Name="WTIesExportSim" Val="30"/>
+    <Option Name="WTVcsExportSim" Val="30"/>
+    <Option Name="WTRivieraExportSim" Val="30"/>
+    <Option Name="WTActivehdlExportSim" Val="30"/>
   </Configuration>
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
@@ -61,21 +61,25 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/ip/clk_wiz_0/clk_wiz_0.xci">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/serdes2zynq.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/new/top_artix.vhd">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/pattern_generator.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/ip/clk_80MHz/clk_80MHz.upgrade_log"/>
-      <File Path="$PSRCDIR/sources_1/ip/fifo_generator_1/fifo_generator_1.upgrade_log"/>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="top_artix"/>
@@ -100,8 +104,14 @@
           <Attr Name="UsedIn" Val="implementation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/constrs_1/new/pins.xdc">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+        </FileInfo>
+      </File>
       <Config>
-        <Option Name="TargetConstrsFile" Val="$PSRCDIR/constrs_1/new/top.xdc"/>
+        <Option Name="TargetConstrsFile" Val="$PSRCDIR/constrs_1/new/pins.xdc"/>
         <Option Name="ConstrsType" Val="XDC"/>
       </Config>
     </FileSet>
@@ -135,8 +145,8 @@
         <Option Name="XSimWcfgFile" Val="$PPRDIR/top_artix_tb_behav.wcfg"/>
       </Config>
     </FileSet>
-    <FileSet Name="fifo_generator_512to64" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fifo_generator_512to64">
-      <File Path="$PSRCDIR/sources_1/ip/fifo_generator_512to64/fifo_generator_512to64.xci">
+    <FileSet Name="axis_dwidth_converter_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/axis_dwidth_converter_0">
+      <File Path="$PSRCDIR/sources_1/ip/axis_dwidth_converter_0/axis_dwidth_converter_0.xci">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -144,12 +154,12 @@
         </FileInfo>
       </File>
       <Config>
-        <Option Name="TopModule" Val="fifo_generator_512to64"/>
+        <Option Name="TopModule" Val="axis_dwidth_converter_0"/>
         <Option Name="UseBlackboxStub" Val="1"/>
       </Config>
     </FileSet>
-    <FileSet Name="fifo_generator_64to16" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fifo_generator_64to16">
-      <File Path="$PSRCDIR/sources_1/ip/fifo_generator_64to16/fifo_generator_64to16.xci">
+    <FileSet Name="axis_clock_converter_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/axis_clock_converter_0">
+      <File Path="$PSRCDIR/sources_1/ip/axis_clock_converter_0/axis_clock_converter_0.xci">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -157,20 +167,7 @@
         </FileInfo>
       </File>
       <Config>
-        <Option Name="TopModule" Val="fifo_generator_64to16"/>
-        <Option Name="UseBlackboxStub" Val="1"/>
-      </Config>
-    </FileSet>
-    <FileSet Name="clk_wiz_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/clk_wiz_0">
-      <File Path="$PSRCDIR/sources_1/ip/clk_wiz_0/clk_wiz_0.xci">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <Config>
-        <Option Name="TopModule" Val="clk_wiz_0"/>
+        <Option Name="TopModule" Val="axis_clock_converter_0"/>
         <Option Name="UseBlackboxStub" Val="1"/>
       </Config>
     </FileSet>
@@ -197,50 +194,28 @@
     </Simulator>
   </Simulators>
   <Runs Version="1" Minor="10">
-    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7a15tcsg324-2" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7a35tcsg324-2" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2015"/>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
-    <Run Id="fifo_generator_512to64_synth_1" Type="Ft3:Synth" SrcSet="fifo_generator_512to64" Part="xc7a15tcsg324-2" ConstrsSet="fifo_generator_512to64" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/fifo_generator_512to64_synth_1" IncludeInArchive="true">
+    <Run Id="axis_dwidth_converter_0_synth_1" Type="Ft3:Synth" SrcSet="axis_dwidth_converter_0" Part="xc7a35tcsg324-2" ConstrsSet="axis_dwidth_converter_0" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/axis_dwidth_converter_0_synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
-    <Run Id="fifo_generator_64to16_synth_1" Type="Ft3:Synth" SrcSet="fifo_generator_64to16" Part="xc7a15tcsg324-2" ConstrsSet="fifo_generator_64to16" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/fifo_generator_64to16_synth_1" IncludeInArchive="true">
+    <Run Id="axis_clock_converter_0_synth_1" Type="Ft3:Synth" SrcSet="axis_clock_converter_0" Part="xc7a35tcsg324-2" ConstrsSet="axis_clock_converter_0" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/axis_clock_converter_0_synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
-    <Run Id="clk_wiz_0_synth_1" Type="Ft3:Synth" SrcSet="clk_wiz_0" Part="xc7a15tcsg324-2" ConstrsSet="clk_wiz_0" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/clk_wiz_0_synth_1" IncludeInArchive="true">
-      <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
-        <Step Id="synth_design"/>
-      </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
-    </Run>
-    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7a15tcsg324-2" ConstrsSet="constrs_1" Description="Vivado Implementation Defaults" State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1" IncludeInArchive="true">
-      <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2015"/>
-        <Step Id="init_design"/>
-        <Step Id="opt_design"/>
-        <Step Id="power_opt_design"/>
-        <Step Id="place_design"/>
-        <Step Id="post_place_power_opt_design"/>
-        <Step Id="phys_opt_design"/>
-        <Step Id="route_design"/>
-        <Step Id="post_route_phys_opt_design"/>
-        <Step Id="write_bitstream"/>
-      </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
-    </Run>
-    <Run Id="fifo_generator_512to64_impl_1" Type="Ft2:EntireDesign" Part="xc7a15tcsg324-2" ConstrsSet="fifo_generator_512to64" Description="Default settings for Implementation." SynthRun="fifo_generator_512to64_synth_1" IncludeInArchive="false">
+    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7a15tcsg324-2" ConstrsSet="constrs_1" Description="Default settings for Implementation." SynthRun="synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
         <Step Id="init_design"/>
@@ -254,7 +229,22 @@
         <Step Id="write_bitstream"/>
       </Strategy>
     </Run>
-    <Run Id="fifo_generator_64to16_impl_1" Type="Ft2:EntireDesign" Part="xc7a15tcsg324-2" ConstrsSet="fifo_generator_64to16" Description="Default settings for Implementation." SynthRun="fifo_generator_64to16_synth_1" IncludeInArchive="false">
+    <Run Id="impl_35" Type="Ft2:EntireDesign" Part="xc7a35tcsg324-2" ConstrsSet="constrs_1" Description="Default settings for Implementation." State="current" Dir="$PRUNDIR/impl_35" SynthRun="synth_1" IncludeInArchive="true">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream"/>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+    </Run>
+    <Run Id="axis_dwidth_converter_0_impl_1" Type="Ft2:EntireDesign" Part="xc7a35tcsg324-2" ConstrsSet="axis_dwidth_converter_0" Description="Default settings for Implementation." SynthRun="axis_dwidth_converter_0_synth_1" IncludeInArchive="false">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
         <Step Id="init_design"/>
@@ -268,7 +258,7 @@
         <Step Id="write_bitstream"/>
       </Strategy>
     </Run>
-    <Run Id="clk_wiz_0_impl_1" Type="Ft2:EntireDesign" Part="xc7a15tcsg324-2" ConstrsSet="clk_wiz_0" Description="Default settings for Implementation." SynthRun="clk_wiz_0_synth_1" IncludeInArchive="false">
+    <Run Id="axis_clock_converter_0_impl_1" Type="Ft2:EntireDesign" Part="xc7a35tcsg324-2" ConstrsSet="axis_clock_converter_0" Description="Default settings for Implementation." SynthRun="axis_clock_converter_0_synth_1" IncludeInArchive="false">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
         <Step Id="init_design"/>
