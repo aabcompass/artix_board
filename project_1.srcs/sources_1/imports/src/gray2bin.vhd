@@ -50,6 +50,10 @@ end gray2bin;
 
 architecture Behavioral of gray2bin is
 
+	attribute keep_hierarchy : string;
+	attribute keep_hierarchy of Behavioral : architecture is "yes";
+
+
 	signal arg1, arg2, arg3, datain_d1: std_logic_vector(7 downto 0) := (others => '0');
 	signal datain_dv_d1: std_logic := '0';
 	

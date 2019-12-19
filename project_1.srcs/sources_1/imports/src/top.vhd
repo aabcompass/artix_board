@@ -29,6 +29,10 @@ end pmt_readout_top;
 
 
 architecture Behavioral of pmt_readout_top is
+
+	attribute keep_hierarchy : string;
+	attribute keep_hierarchy of Behavioral : architecture is "yes";
+
 	
 	component clk_80MHz
 	port

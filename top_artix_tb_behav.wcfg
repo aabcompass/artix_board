@@ -11,13 +11,19 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="8214600000fs"></ZoomStartTime>
-      <ZoomEndTime time="21574600001fs"></ZoomEndTime>
-      <Cursor1Time time="10874600000fs"></Cursor1Time>
+      <ZoomStartTime time="15977503125fs"></ZoomStartTime>
+      <ZoomEndTime time="15997183126fs"></ZoomEndTime>
+      <Cursor1Time time="15572500000fs"></Cursor1Time>
    </zoom_setting>
-   <WVObjectSize size="28" />
+   <column_width_setting>
+      <NameColumnWidth column_width="259"></NameColumnWidth>
+      <ValueColumnWidth column_width="96"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="23" />
    <wave_markers>
       <marker label="" time="46877599000" />
+      <marker label="" time="15567500000" />
+      <marker label="" time="15570000000" />
    </wave_markers>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/clk_pri">
       <obj_property name="ElementShortName">clk_pri</obj_property>
@@ -51,10 +57,6 @@
       <obj_property name="label">3072bits=64x6x8</obj_property>
       <obj_property name="DisplayName">label</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/aclk">
-      <obj_property name="ElementShortName">aclk</obj_property>
-      <obj_property name="ObjectShortName">aclk</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left">
       <obj_property name="ElementShortName">readout_dataout_left[3071:0]</obj_property>
       <obj_property name="ObjectShortName">readout_dataout_left[3071:0]</obj_property>
@@ -67,25 +69,9 @@
       <obj_property name="ElementShortName">readout_dataout_left_dv[5:0]</obj_property>
       <obj_property name="ObjectShortName">readout_dataout_left_dv[5:0]</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/s_axis_tready">
-      <obj_property name="ElementShortName">s_axis_tready</obj_property>
-      <obj_property name="ObjectShortName">s_axis_tready</obj_property>
-   </wvobject>
    <wvobject fp_name="divider30" type="divider">
       <obj_property name="label">8bits bus</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/m_axis_tvalid">
-      <obj_property name="ElementShortName">m_axis_tvalid</obj_property>
-      <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/m_axis_tready">
-      <obj_property name="ElementShortName">m_axis_tready</obj_property>
-      <obj_property name="ObjectShortName">m_axis_tready</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/dw_conv_left/m_axis_tdata">
-      <obj_property name="ElementShortName">m_axis_tdata[7:0]</obj_property>
-      <obj_property name="ObjectShortName">m_axis_tdata[7:0]</obj_property>
    </wvobject>
    <wvobject fp_name="divider39" type="divider">
       <obj_property name="label">hf domain</obj_property>

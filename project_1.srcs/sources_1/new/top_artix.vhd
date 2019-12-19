@@ -1,3 +1,10 @@
+-------------------------------------------------------
+--! @file top_artix.vhd
+--! @brief Artix top level module
+--! @author Alexander Belov
+-------------------------------------------------------
+
+
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -9,48 +16,35 @@ use UNISIM.VComponents.all;
 --
 
 entity top_artix is
-    generic(gen_mode : std_logic := '0');
+    --generic(gen_mode : std_logic := '1');
     Port 
     ( 
-      -- system
-      clk_pri : in STD_LOGIC;--+
-      artix_addr: in std_logic_vector(1 downto 0);--+
-      --artix_ctrl: in std_logic;
-      --clk_40MHz_slave: in STD_LOGIC; --removed
-      --clk_wiz_0_reset: in STD_LOGIC; --not presented
-      
-      
-      -- to/from other artix
-      --artix_gtu: out std_logic;  --not presented
-      --artix_40mhz_0: out std_logic; --removed
-      --artix_40mhz_1: out std_logic; --removed
-      --artix_val_evt: out std_logic := '1'; -- always '1' --??
+      --! system
+      clk_pri : in STD_LOGIC;--!< Primary clock from Zynq
+      artix_addr: in std_logic_vector(1 downto 0);--!< 2bit address for distinguish which Artix (from 3)
+      --! gen mode
+      gen_mode: in std_logic;
        
-      -- clk to SPACIROC
-      ec_val_evt_2_p, ec_val_evt_2_n: out std_logic;
+      --! clk to SPACIROC
+      ec_val_evt_2_p, ec_val_evt_2_n: out std_logic; --!< Clock and strobe signals for ASIC control
       ec_val_evt_3_p, ec_val_evt_3_n: out std_logic;
       ec_clk_gtu_2_p, ec_clk_gtu_2_n: out std_logic;
       ec_clk_gtu_3_p, ec_clk_gtu_3_n: out std_logic;
       ec_40MHz_2_p, ec_40MHz_2_n: out std_logic;
       ec_40MHz_3_p, ec_40MHz_3_n: out std_logic;
       
-      -- data to ZYNQ
-      zynq_frame_p, zynq_frame_n: out std_logic;
-      zynq_data_p, zynq_data_n: out std_logic_vector(11 downto 0);
-      zynq_clk_p, zynq_clk_n: out std_logic;
+      --! data to ZYNQ
+      zynq_frame_p, zynq_frame_n: out std_logic; --!< Frame diff signal for data transfer from Artix to Zynq
+      zynq_data_p, zynq_data_n: out std_logic_vector(11 downto 0); --!< Data diff signals for data transfer from Artix to Zynq
+      zynq_clk_p, zynq_clk_n: out std_logic; --!< Clock diff signal for data transfer from Artix to Zynq
       
-      --from SPACIROCs
-      ec_data_left: in std_logic_vector(47 downto 0); -- A(7:0) & B(7:0) & ... & F(7:0)
-      ec_transmit_on_left: in std_logic_vector(5 downto 0); -- A & B & ... & F
-      ec_data_right: in std_logic_vector(47 downto 0); -- A(7:0) & B(7:0) & ... & F(7:0)
-      ec_transmit_on_right: in std_logic_vector(5 downto 0); -- A & B & ... & F
+      --! from SPACIROCs
+      ec_data_left: in std_logic_vector(47 downto 0); --!< Data signals from ASICs A(7:0) & B(7:0) & ... & F(7:0)
+      ec_transmit_on_left: in std_logic_vector(5 downto 0); --!< Transmit signal from ASICs A & B & ... & F
+      ec_data_right: in std_logic_vector(47 downto 0); --!< Data signals from ASICs  A(7:0) & B(7:0) & ... & F(7:0)
+      ec_transmit_on_right: in std_logic_vector(5 downto 0); --!< Transmit signal from ASICs A & B & ... & F
       
-      -- locked
-      --locked: out std_logic; --XP
-      --led_a8: out std_logic;  --XP
-      --led_slave: out std_logic;  --XP
-      --clk_gtu_aux: out std_logic;  --XP
-      
+      --! from SPACIROCs 
       sr_ck_frw_in: in std_logic;--; -- not presented in PCB
       sr_ck_frw_out0, sr_ck_frw_out1: out std_logic
     );
@@ -58,15 +52,26 @@ end top_artix;
 
 architecture Behavioral of top_artix is
 
+	--constant gen_mode : std_logic := '0'; 
 
-	component clk_wiz_0
+	COMPONENT vio_0
+		PORT (
+			clk : IN STD_LOGIC;
+			probe_out0 : OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
+		);
+	END COMPONENT;
+
+
+	component clk_wiz_div10
 	port
 	 (-- Clock in ports
 		clk_in_pri           : in     std_logic;
+		reset           : in     std_logic;
 		-- Clock out ports
 		clk_ec          : out    std_logic;
 		clk_ec_hf          : out    std_logic;
 		clk_serdes          : out    std_logic;
+		clk_serdes_shifted          : out    std_logic;
 		-- Status and control signals
 		locked            : out    std_logic
 	 );
@@ -133,6 +138,7 @@ architecture Behavioral of top_artix is
 	signal clk_ec: std_logic;
 	signal clk_hf: std_logic; --half of clk_ec
 	signal clk_serdes : std_logic;
+	signal clk_serdes_shifted : std_logic;
 
 	signal clk_gtu_i: std_logic;
 	
@@ -173,7 +179,19 @@ architecture Behavioral of top_artix is
 
 	signal test_counter_left, test_counter_right : std_logic_vector(7 downto 0) := (others => '0');
 	
+	signal idelay_REFCLK_200MHZ: std_logic;
+	signal idelay_rst_200MHZ: std_logic;
+	signal transmit_delay: std_logic_vector(3 downto 0);
+	
+	signal ec_transmit_on_left_d1, ec_transmit_on_right_d1: std_logic_vector(5 downto 0) := (others => '0');
+	
+   attribute keep : string;
+	attribute keep of ec_transmit_on_left_d1 : signal is "true";
+	attribute keep of ec_transmit_on_right_d1 : signal is "true";
+	
+	
 begin
+
 
 	sr_ck_frw_out0 <= sr_ck_frw_in;
 	sr_ck_frw_out1 <= sr_ck_frw_in;
@@ -190,14 +208,16 @@ begin
 --   locked => locked_i            
 -- );
 
-i_clk_wiz_0 : clk_wiz_0
+i_clk_wiz : clk_wiz_div10
    port map ( 
    -- Clock in ports
    clk_in_pri => clk_pri,
+   reset => '0',
   -- Clock out ports  
    clk_ec => clk_ec,
    clk_ec_hf => clk_hf,
    clk_serdes => clk_serdes,
+   clk_serdes_shifted => clk_serdes_shifted,
   -- Status and control signals                
    locked => locked_i            
  );
@@ -279,6 +299,18 @@ i_clk_wiz_0 : clk_wiz_0
 	inst_OBUFDS_ec_val_evt_3: obufds port map(ec_val_evt_3_p, ec_val_evt_3_n, '1');
 
   -- PMT readout instantiate
+
+	i_vio_0 : vio_0
+  PORT MAP (
+    clk => clk_ec,
+    probe_out0 => transmit_delay
+
+	--transmit_delay <= X"7";
+  );
+
+	ec_transmit_on_left_d1 <= ec_transmit_on_left when rising_edge(clk_ec);
+	ec_transmit_on_right_d1 <= ec_transmit_on_right when rising_edge(clk_ec);
+
   
 	gen_inst_pmt_readout: for i in 0 to 5 generate
 		inst_pmt_readout_left : pmt_readout_top
@@ -297,7 +329,7 @@ i_clk_wiz_0 : clk_wiz_0
 				readout_process_state => open,--, 
 				readout_dutycounter_process_state => open,--: out std_logic_vector(3 downto 0);
 				-- config module
-				transmit_delay => conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
+				transmit_delay => transmit_delay--conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
 			);
 		
 		inst_pmt_readout_right : pmt_readout_top
@@ -316,7 +348,7 @@ i_clk_wiz_0 : clk_wiz_0
 				readout_process_state => open,--, 
 				readout_dutycounter_process_state => open,--: out std_logic_vector(3 downto 0);
 				-- config module
-				transmit_delay => conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
+				transmit_delay => transmit_delay--conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
 			);		
 
 		dw_conv_left : axis_dwidth_converter_0
@@ -402,10 +434,15 @@ i_clk_wiz_0 : clk_wiz_0
 			dataout_p => zynq_frame_p,--: out STD_LOGIC;
 			dataout_n => zynq_frame_n); --: out STD_LOGIC);
 
-	serdes_frw_clk: serdes2zynq 
+	idelay_REFCLK_200MHZ <= clk_ec;
+	idelay_rst_200MHZ <= reset_readout;
+	
+	serdes_frw_clk: serdes2zynq
 		Port map( 
-			clk => clk_serdes,--: in STD_LOGIC;
+			clk => clk_serdes_shifted,--: in STD_LOGIC;
 			clkdiv => clk_hf,--: in STD_LOGIC;
+			--idelay_REFCLK_200MHZ => idelay_REFCLK_200MHZ,
+			--idelay_rst_200MHZ => idelay_rst_200MHZ,
 			reset_serdes => rst_hf,
 			datain => "01010101",--: in STD_LOGIC_VECTOR (7 downto 0);
 			dataout_p => zynq_clk_p,--: out STD_LOGIC;

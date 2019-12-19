@@ -1,23 +1,22 @@
-
-
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-
-
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+use IEEE.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
 entity top_artix_tb is
---  Port ( );
 end top_artix_tb;
 
 architecture Behavioral of top_artix_tb is
 
 	component top_artix
-			generic(gen_mode : std_logic := '0');
+			--generic(gen_mode : std_logic := '1');
 			Port 
 			( 
      -- system
 			 clk_pri : in STD_LOGIC;--+
 			 artix_addr: in std_logic_vector(1 downto 0);--+
+			 gen_mode: in std_logic;
 			  
 			 -- clk to SPACIROC
 			 ec_val_evt_2_p, ec_val_evt_2_n: out std_logic;
@@ -45,6 +44,8 @@ architecture Behavioral of top_artix_tb is
 	end component;
 
 	signal clk_pri: std_logic := '0';
+	signal ec_40MHz_2_p: std_logic := '0';
+	signal ec_data_left: std_logic_vector(47 downto 0) := (others => '0');
 	
 begin
 
@@ -56,13 +57,23 @@ begin
 		wait for 5 ns;
 	end process;
 	
+	ec_data_left_gen: process(ec_40MHz_2_p)
+	begin
+		if(rising_edge(ec_40MHz_2_p)) then
+			ec_data_left <= ec_data_left + 1;
+		end if;
+	end process;
+	
+	
 	dut: top_artix 
-	generic map (gen_mode => '1')
+	--generic map (gen_mode => '1')
 	port map
 	(
 		clk_pri => clk_pri,
+		gen_mode => '0',
 		artix_addr => "10",
-		ec_data_left => (others => '0'),
+		ec_40MHz_2_p => ec_40MHz_2_p,
+		ec_data_left => ec_data_left,
 		ec_data_right => (others => '0'),
 		ec_transmit_on_left => (others => '0'),
 		ec_transmit_on_right => (others => '0'),
