@@ -39,7 +39,11 @@ architecture Behavioral of top_artix_tb is
 			 
 			 
 			 sr_ck_frw_in: in std_logic;--; -- not presented in PCB
-			 sr_ck_frw_out0, sr_ck_frw_out1: out std_logic
+			 sr_ck_frw_out0, sr_ck_frw_out1: out std_logic;
+			 
+			 bitstream_out: out std_logic;
+			 bitstream_in: in std_logic
+
 			);
 	end component;
 
@@ -77,7 +81,8 @@ begin
 		ec_data_right => (others => '0'),
 		ec_transmit_on_left => (others => '0'),
 		ec_transmit_on_right => (others => '0'),
-		sr_ck_frw_in => '0'		
+		sr_ck_frw_in => '0',
+		bitstream_in => '0'	
 	);
 
 end Behavioral;
