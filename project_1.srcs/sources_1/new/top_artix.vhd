@@ -13,6 +13,10 @@ use ieee.std_logic_arith.all;
 
 library UNISIM;
 use UNISIM.VComponents.all;
+
+
+Library xpm;
+use xpm.vcomponents.all;
 --
 
 entity top_artix is
@@ -51,6 +55,7 @@ entity top_artix is
       bitstream_in: in std_logic;
       bitstream_out: out std_logic;
 			sr_ck: in STD_LOGIC;
+		  sr_in : in STD_LOGIC;
 		  sr_out : out STD_LOGIC;
 			latch : in STD_LOGIC
     );
@@ -207,8 +212,10 @@ architecture Behavioral of top_artix is
 
 	signal m_axis_tdata_left, m_axis_tdata_right: std_logic_vector(6*8-1 downto 0) := (others => '0');
 	signal m_axis_tdata_left_hf, m_axis_tdata_right_hf: std_logic_vector(6*8-1 downto 0) := (others => '0');
+	signal m_axis_tdata_left_hf_2, m_axis_tdata_right_hf_2: std_logic_vector(6*8-1 downto 0) := (others => '0');
 	signal m_axis_tvalid_left_hf: std_logic_vector(5 downto 0) := (others => '0');
 	signal m_axis_tvalid_hf: std_logic_vector(7 downto 0) := (others => '0');
+	signal m_axis_tvalid_hf_2: std_logic_vector(7 downto 0) := (others => '0');
 	
 	signal led : std_logic := '0';
 	--signal counter_40MHz_slave: std_logic_vector(7 downto 0) := (others => '0');
@@ -219,12 +226,13 @@ architecture Behavioral of top_artix is
 	
 	signal idelay_REFCLK_200MHZ: std_logic;
 	signal idelay_rst_200MHZ: std_logic;
-	signal transmit_delay: std_logic_vector(3 downto 0);
+	signal transmit_delay, transmit_delay_vio, transmit_delay_sc: std_logic_vector(3 downto 0);
 	
 	signal ec_transmit_on_left_d1, ec_transmit_on_right_d1: std_logic_vector(5 downto 0) := (others => '0');
 	signal sreg_input_reg, sreg_output_reg: std_logic_vector(31 downto 0) := (others => '0');
-	signal shift_time: std_logic_vector(2 downto 0) := (others => '0');
-	signal gen_mode: std_logic_vector(0 downto 0) := "0";
+	signal shift_time, shift_time_sc, shift_time_vio: std_logic_vector(2 downto 0) := (others => '0');
+	signal gen_mode, vio_influence: std_logic_vector(0 downto 0) := "0";
+	signal is_testmode2, is_testmode2_sync: std_logic:= '0';
 	
    attribute keep : string;
 	attribute keep of ec_transmit_on_left_d1 : signal is "true";
@@ -285,15 +293,34 @@ i_clk_wiz : clk_wiz_div10
 	i_sc: slow_ctrl 
 			Port map( clk => clk_ec,--: in STD_LOGIC;
 							sr_ck => sr_ck,--: in STD_LOGIC;
-						 sr_in => bitstream_in,--: in STD_LOGIC;
+						 sr_in => sr_in,--: in STD_LOGIC;
 						 sr_out => sr_out,--: out STD_LOGIC;
 						 latch => latch,--: in STD_LOGIC;
 						 sreg_input_reg => sreg_input_reg,--: out std_logic_vector(31 downto 0);
 						 sreg_output_reg => sreg_output_reg);--: in std_logic_vector(31 downto 0));
 
-	--shift_time <= sreg_input_reg(2 downto 0);
-	--gen_mode <= sreg_input_reg(3);
-	--transmit_delay <= sreg_input_reg(7 downto 4);
+	shift_time_sc <= sreg_input_reg(2 downto 0);
+	gen_mode(0) <= sreg_input_reg(3);
+	transmit_delay_sc <= sreg_input_reg(7 downto 4);
+	is_testmode2 <= sreg_input_reg(8);
+	
+  xpm_cdc_single_inst : xpm_cdc_single
+	 generic map (
+	    DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+	    INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+	                         -- values
+	    SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+	    SRC_INPUT_REG => 0   -- DECIMAL; integer; 0=do not register input, 1=register input
+	 )
+	 port map (
+	    dest_out => is_testmode2_sync, -- 1-bit output: src_in synchronized to the destination clock domain. This output
+	                          -- is registered.
+
+	    dest_clk => clk_serdes, -- 1-bit input: Clock signal for the destination clock domain.
+	    src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+	    src_in => is_testmode2      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
+	 );
+	
 
   readout_clk_former_process: process(clk_ec)	
 		variable state : integer range 0 to 1 := 0;
@@ -358,12 +385,24 @@ i_clk_wiz : clk_wiz_div10
 	i_vio_0 : vio_0
   PORT MAP (
     clk => clk_ec,
-    probe_out0 => transmit_delay,
-    probe_out1 => shift_time,
-    probe_out2 => gen_mode
-
+    probe_out0 => transmit_delay_vio,
+    probe_out1 => shift_time_vio,
+    probe_out2 => vio_influence
 	--transmit_delay <= X"7"
   );
+  
+  timings_param_selector: process(clk_ec)
+  begin
+  	if(rising_edge(clk_ec)) then
+  		if(vio_influence = "1") then
+  			transmit_delay <= transmit_delay_vio;
+  			shift_time <= shift_time_vio;
+  		else
+  			transmit_delay <= transmit_delay_sc;
+  			shift_time <= shift_time_sc;  			
+  		end if;
+  	end if;
+  end process;
 
 	ec_transmit_on_left_d1 <= ec_transmit_on_left when rising_edge(clk_ec);
 	ec_transmit_on_right_d1 <= ec_transmit_on_right when rising_edge(clk_ec);
@@ -459,13 +498,34 @@ i_clk_wiz : clk_wiz_div10
 				m_axis_tready => '1',
 				m_axis_tdata => m_axis_tdata_right_hf(7+8*i downto 8*i)
 			);
+	test_mode2_select: process(clk_serdes)
+		variable artix_addr_mode: std_logic_vector(1 downto 0);
+	begin
+		if(rising_edge(clk_serdes)) then
+			--artix_addr_mode
+			case artix_addr is
+				when "00" => artix_addr_mode := "10";
+				when "01" => artix_addr_mode := "01";
+				when "10" => artix_addr_mode := "00";
+				when others => artix_addr_mode := "00";			
+			end case;
+			if(is_testmode2_sync = '1') then
+				m_axis_tdata_left_hf_2(7+8*i downto 8*i) <= "00" & artix_addr_mode & '0' & conv_std_logic_vector(i, 3);
+				m_axis_tdata_right_hf_2(7+8*i downto 8*i) <= "00" & artix_addr_mode & '1' & conv_std_logic_vector(i, 3);
+			else
+				m_axis_tdata_left_hf_2(7+8*i downto 8*i) <= m_axis_tdata_left_hf(7+8*i downto 8*i);
+				m_axis_tdata_right_hf_2(7+8*i downto 8*i) <= m_axis_tdata_right_hf(7+8*i downto 8*i);
+			end if;		
+		end if;
+	end process;
+		
 		
 	serdes_left: serdes2zynq 
 			Port map( 
 				clk => clk_serdes,--: in STD_LOGIC;
 				clkdiv => clk_hf,--: in STD_LOGIC;
 				reset_serdes => rst_hf,
-				datain => m_axis_tdata_left_hf(7+8*i downto 8*i),--: in STD_LOGIC_VECTOR (7 downto 0);
+				datain => m_axis_tdata_left_hf_2(7+8*i downto 8*i),--: in STD_LOGIC_VECTOR (7 downto 0);
 				dataout_p => zynq_data_p(i),--: out STD_LOGIC;
 				dataout_n => zynq_data_n(i)); --: out STD_LOGIC);
 		
@@ -474,20 +534,21 @@ i_clk_wiz : clk_wiz_div10
 				clk => clk_serdes,--: in STD_LOGIC;
 				clkdiv => clk_hf,--: in STD_LOGIC;
 				reset_serdes => rst_hf,
-				datain => m_axis_tdata_right_hf(7+8*i downto 8*i),--: in STD_LOGIC_VECTOR (7 downto 0);
+				datain => m_axis_tdata_right_hf_2(7+8*i downto 8*i),--: in STD_LOGIC_VECTOR (7 downto 0);
 				dataout_p => zynq_data_p(6+i),--: out STD_LOGIC;
 				dataout_n => zynq_data_n(6+i)); --: out STD_LOGIC);
 
 	end generate;
 	
 	m_axis_tvalid_hf <= (7 downto 0 => m_axis_tvalid_left_hf(0));
+	m_axis_tvalid_hf_2 <= m_axis_tvalid_hf when rising_edge(clk_serdes);
 
 	serdes_frame: serdes2zynq 
 		Port map( 
 			clk => clk_serdes,--: in STD_LOGIC;
 			clkdiv => clk_hf,--: in STD_LOGIC;
 			reset_serdes => rst_hf,
-			datain => m_axis_tvalid_hf,--: in STD_LOGIC_VECTOR (7 downto 0);
+			datain => m_axis_tvalid_hf_2,--: in STD_LOGIC_VECTOR (7 downto 0);
 			dataout_p => zynq_frame_p,--: out STD_LOGIC;
 			dataout_n => zynq_frame_n); --: out STD_LOGIC);
 
