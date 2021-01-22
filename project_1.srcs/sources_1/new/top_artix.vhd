@@ -189,6 +189,7 @@ architecture Behavioral of top_artix is
 	
 	signal artix_40mhz_0_i, artix_40mhz_1_i: std_logic := '0';
 	signal reset_readout, nreset_readout, rst_fifo: std_logic := '1';
+	signal reset_asic_odelay_cmd, reset_asic_odelay: std_logic := '1';
 	signal nrst_hf, rst_hf: std_logic := '0';
 	signal clk_40MHZ_p_i: std_logic;
 --	signal start_load_fifo: std_logic := '0';
@@ -303,6 +304,7 @@ i_clk_wiz : clk_wiz_div10
 	gen_mode(0) <= sreg_input_reg(3);
 	transmit_delay_sc <= sreg_input_reg(7 downto 4);
 	is_testmode2 <= sreg_input_reg(8);
+	reset_asic_odelay_cmd <= sreg_input_reg(9);
 	
   xpm_cdc_single_inst : xpm_cdc_single
 	 generic map (
@@ -354,11 +356,13 @@ i_clk_wiz : clk_wiz_div10
 		end if;
 	end process;
 
+	reset_asic_odelay <= reset_readout or reset_asic_odelay_cmd;
+
  i_asic_odelay: asic_odelay 
     Port map( 
       clk => clk_ec_serdes,--: std_logic;
       clkdiv => clk_ec,--: std_logic;
-      reset_serdes => reset_readout,--: std_logic;
+      reset_serdes => reset_asic_odelay,--reset_readout,--: std_logic;
       -- inputs
       clk_gtu => clk_gtu_i,--: in std_logic;
       clk_40MHZ_p => clk_40MHZ_p_i,--: in std_logic;

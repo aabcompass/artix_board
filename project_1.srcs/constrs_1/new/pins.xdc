@@ -271,8 +271,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports sr_ck_frw_out0]
 set_property IOSTANDARD LVCMOS33 [get_ports sr_ck_frw_out1]
 
 
-set_property PACKAGE_PIN B8 [get_ports gen_mode]
-set_property IOSTANDARD LVCMOS33 [get_ports gen_mode]
 
 set_property PACKAGE_PIN K18 [get_ports bitstream_in]
 set_property IOSTANDARD LVCMOS25 [get_ports bitstream_in]
@@ -288,3 +286,8 @@ set_property IOSTANDARD LVCMOS33 [get_ports sr_out]
 
 set_property PACKAGE_PIN C10 [get_ports sr_in]
 set_property IOSTANDARD LVCMOS33 [get_ports sr_in]
+
+set_property DRIVE 16 [get_ports bitstream_out]
+set_property SLEW FAST [get_ports bitstream_out]
+set_property PULLUP true [get_ports bitstream_out]
+
