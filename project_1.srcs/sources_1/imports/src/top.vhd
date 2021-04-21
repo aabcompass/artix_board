@@ -17,8 +17,9 @@ entity pmt_readout_top is
 		gen_mode: in std_logic;
 		-- ext io
 		x_data_pc: in std_logic_vector(7 downto 0); -- ext. pins
+		x_data_ki: in std_logic;
 		-- dataout
-		dataout :  out std_logic_vector(511 downto 0) := (others => '0'); -- all data in one vector in oreder to facilitate data re-mapping
+		dataout :  out std_logic_vector(64+511 downto 0) := (others => '0'); -- all data in one vector in oreder to facilitate data re-mapping
 		dataout_dv : out std_logic := '0';
 		-- states
 		readout_process_state, readout_dutycounter_process_state : out std_logic_vector(3 downto 0);
@@ -75,8 +76,11 @@ architecture Behavioral of pmt_readout_top is
 	
    
     signal x_data_pc_d1, x_data_pc_d2, x_data_pc_binary: std_logic_vector(7 downto 0) := (others => '0');
+    signal x_data_ki_d1, x_data_ki_d2, x_data_ki_binary: std_logic;
     signal fifo_datain: std_logic_vector(63 downto 0) := (others => '0');
+    signal fifo_ki_datain: std_logic_vector(7 downto 0) := (others => '0');
     signal readout_channels_gray: std_logic_vector(63 downto 0) := (others => '0');
+    signal readout_channels_ki_gray: std_logic_vector(7 downto 0) := (others => '0');
     
     signal configuration_le_d1: std_logic := '0';
     
@@ -102,6 +106,7 @@ architecture Behavioral of pmt_readout_top is
     signal delay_counter : STD_LOGIC_VECTOR(3 downto 0) := (others => '0');
     
     signal dataout_unmapped : std_logic_vector(511 downto 0)  := (others => '0');
+    signal dataout_ki_unmapped : std_logic_vector(63 downto 0)  := (others => '0');
     
     attribute keep : string;
     attribute keep of x_data_pc_d1 : signal is "true";
@@ -116,6 +121,11 @@ begin
 	x_data_pc_d1 <= x_data_pc when rising_edge(clk);
 	x_data_pc_d2 <= x_data_pc_d1 when rising_edge(clk);
 	x_data_pc_binary <= x_data_pc_d2 when rising_edge(clk);
+
+	x_data_ki_d1 <= x_data_ki when rising_edge(clk);
+	x_data_ki_d2 <= x_data_ki_d1 when rising_edge(clk);
+	x_data_ki_binary <= x_data_ki_d2 when rising_edge(clk);
+
 	
 	-- readout_process_v2
 	readout_process_v2: process(clk)
@@ -148,6 +158,7 @@ begin
 					when 3 => for i in 0 to 7 loop
 											readout_channels_gray(7+i*8 downto i*8) <= readout_channels_gray(6+i*8 downto i*8) & x_data_pc_binary(i);
 										end loop;
+										readout_channels_ki_gray(7 downto 0) <= readout_channels_ki_gray(6 downto 0) & x_data_ki_binary;
 										state := state + 1;
 										if(readout_bit_counter(2 downto 0) = "111") then
 											readout_channels_gray_dv <= '1';
@@ -170,6 +181,7 @@ begin
 	inst_gray2bin_gen: for i in 0 to 7 generate
 		inst_gray2bin: gray2bin port map(clk, readout_channels_gray(7+8*i downto 8*i), '1', fifo_datain(7+8*i downto 8*i), open);
 	end generate inst_gray2bin_gen;
+	inst_gray2bin_ki: gray2bin port map(clk, readout_channels_ki_gray(7 downto 0), '1', fifo_ki_datain(7 downto 0), open);
 	
 	readout_channels_gray_dv_d1 <= readout_channels_gray_dv when rising_edge(clk);
 	fifo_datain_dv <= readout_channels_gray_dv_d1 when rising_edge(clk);
@@ -187,57 +199,73 @@ begin
 					case state is
 						when 0 => if(gen_mode = '0') then
 												dataout_unmapped(63+64*7 downto 64*7) <= fifo_datain;
+												dataout_ki_unmapped(7+8*7 downto 8*7) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*7 downto 64*7) <= X"3830282018100800";
+												dataout_ki_unmapped(7+8*7 downto 8*7) <= X"40";
 											end if;
 											dataout_dv <= '0';
 											state := state + 1;
 						when 1 => if(gen_mode = '0') then
 												dataout_unmapped(63+64*6 downto 64*6) <= fifo_datain;
+												dataout_ki_unmapped(7+8*6 downto 8*6) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*6 downto 64*6) <= X"3931292119110901";
+												dataout_ki_unmapped(7+8*6 downto 8*6) <= X"41";
 											end if;
 											dataout_dv <= '0';
 											state := state + 1;
 						when 2 => if(gen_mode = '0') then
 												dataout_unmapped(63+64*5 downto 64*5) <= fifo_datain;
+												dataout_ki_unmapped(7+8*5 downto 8*5) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*5 downto 64*5) <= X"3A322A221A120A02";
+												dataout_ki_unmapped(7+8*5 downto 8*5) <= X"42";
 											end if;
 											dataout_dv <= '0';
 											state := state + 1;
 						when 3 => if(gen_mode = '0') then	
 												dataout_unmapped(63+64*4 downto 64*4) <= fifo_datain;
+												dataout_ki_unmapped(7+8*4 downto 8*4) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*4 downto 64*4) <= X"3B332B231B130B03";
+												dataout_ki_unmapped(7+8*4 downto 8*4) <= X"43";
 											end if;
 											dataout_dv <= '0';
 											state := state + 1;
 						when 4 => if(gen_mode = '0') then	
 												dataout_unmapped(63+64*3 downto 64*3) <= fifo_datain;
+												dataout_ki_unmapped(7+8*3 downto 8*3) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*3 downto 64*3) <= X"3C342C241C140C04";
+												dataout_ki_unmapped(7+8*3 downto 8*3) <= X"44";
 											end if;
 											dataout_dv <= '0';
 											state := state + 1;
 						when 5 => if(gen_mode = '0') then	
 												dataout_unmapped(63+64*2 downto 64*2) <= fifo_datain;
+												dataout_ki_unmapped(7+8*2 downto 8*2) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*2 downto 64*2) <= X"3D352D251D150D05";
+												dataout_ki_unmapped(7+8*2 downto 8*2) <= X"45";
 											end if;
 											dataout_dv <= '0';
 											state := state + 1;
 						when 6 => if(gen_mode = '0') then	
 												dataout_unmapped(63+64*1 downto 64*1) <= fifo_datain;
+												dataout_ki_unmapped(7+8*1 downto 8*1) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*1 downto 64*1) <= X"3E362E261E160E06";
+												dataout_ki_unmapped(7+8*1 downto 8*1) <= X"46";
 											end if;
 											dataout_dv <= '0';
 											state := state + 1;
 						when 7 => if(gen_mode = '0') then	
 												dataout_unmapped(63+64*0 downto 64*0) <= fifo_datain;
+												dataout_ki_unmapped(7+8*0 downto 8*0) <= fifo_ki_datain;
 											else
 												dataout_unmapped(63+64*0 downto 64*0) <= X"3F372F271F170F07";
+												dataout_ki_unmapped(7+8*0 downto 8*0) <= X"47";
 											end if;
 											dataout_dv <= '1';
 											state := 0;
@@ -257,6 +285,7 @@ begin
 			dataout(dst*8 + 7 downto dst*8) <= dataout_unmapped(src*8 + 7 downto src*8);
 		end generate;
 	end generate;
+	dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
 
 
 end Behavioral;

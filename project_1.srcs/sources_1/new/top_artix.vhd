@@ -44,8 +44,10 @@ entity top_artix is
       
       --! from SPACIROCs
       ec_data_left: in std_logic_vector(47 downto 0); --!< Data signals from ASICs A(7:0) & B(7:0) & ... & F(7:0)
+      ec_data_ki_left: in std_logic_vector(5 downto 0); --!< Data signals from ASICs A(7:0) & B(7:0) & ... & F(7:0)
       ec_transmit_on_left: in std_logic_vector(5 downto 0); --!< Transmit signal from ASICs A & B & ... & F
       ec_data_right: in std_logic_vector(47 downto 0); --!< Data signals from ASICs  A(7:0) & B(7:0) & ... & F(7:0)
+      ec_data_ki_right: in std_logic_vector(5 downto 0); --!< Data signals from ASICs  A(7:0) & B(7:0) & ... & F(7:0)
       ec_transmit_on_right: in std_logic_vector(5 downto 0); --!< Transmit signal from ASICs A & B & ... & F
       
       --! from SPACIROCs 
@@ -129,8 +131,9 @@ architecture Behavioral of top_artix is
   		gen_mode: in std_logic;	
   		-- ext io
   		x_data_pc: in std_logic_vector(7 downto 0); -- ext. pins
+  		x_data_ki: in std_logic; -- ext. pins
   		-- dataout
-  		dataout :  out std_logic_vector(511 downto 0); -- all data in one vector in oreder to facilitate data re-mapping
+  		dataout :  out std_logic_vector(64+511 downto 0); -- all data in one vector in oreder to facilitate data re-mapping
   		dataout_dv : out std_logic;
   		-- states
   		readout_process_state, readout_dutycounter_process_state : out std_logic_vector(3 downto 0);
@@ -146,7 +149,7 @@ architecture Behavioral of top_artix is
 			aresetn : IN STD_LOGIC;
 			s_axis_tvalid : IN STD_LOGIC;
 			s_axis_tready : OUT STD_LOGIC;
-			s_axis_tdata : IN STD_LOGIC_VECTOR(511 DOWNTO 0);
+			s_axis_tdata : IN STD_LOGIC_VECTOR((511+64) DOWNTO 0);
 			m_axis_tvalid : OUT STD_LOGIC;
 			m_axis_tready : IN STD_LOGIC;
 			m_axis_tdata : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
@@ -199,7 +202,7 @@ architecture Behavioral of top_artix is
 --	signal zynq_clk: std_logic := '0';
 	
 	signal readout_clk_counter: std_logic_vector(9 downto 0) := (others => '0');
-	signal readout_dataout_left, readout_dataout_right: std_logic_vector(512*6-1 downto 0) := (others => '0');
+	signal readout_dataout_left, readout_dataout_right: std_logic_vector((512+64)*6-1 downto 0) := (others => '0');
 	signal readout_dataout_left_dv: std_logic_vector(5 downto 0) := (others => '0');
 	
 	signal m_axis_tvalid_left, m_axis_tvalid_right: std_logic_vector(5 downto 0) := (others => '0');
@@ -422,8 +425,9 @@ i_clk_wiz : clk_wiz_div10
 				gen_mode => gen_mode(0),	
 				-- ext io
 				x_data_pc => ec_data_left(7+8*i downto 0+8*i),--: in std_logic_vector(7 downto 0); -- ext. pins
+				x_data_ki => ec_data_ki_left(i),--: in std_logic_vector(7 downto 0); -- ext. pins
 				-- dataout
-				dataout => readout_dataout_left(511+512*i downto 512*i),--:  out std_logic_vector(511 downto 0); -- all data in one vector in oreder to facilitate data re-mapping
+				dataout => readout_dataout_left((511+64)+(512+64)*i downto (512+64)*i),--:  out std_logic_vector(511 downto 0); -- all data in one vector in oreder to facilitate data re-mapping
 				dataout_dv => readout_dataout_left_dv(i),--: out std_logic;
 				-- states
 				readout_process_state => open,--, 
@@ -441,8 +445,9 @@ i_clk_wiz : clk_wiz_div10
 				gen_mode => gen_mode(0),		
 				-- ext io
 				x_data_pc => ec_data_right(7+8*i downto 0+8*i),--: in std_logic_vector(7 downto 0); -- ext. pins
+				x_data_ki => ec_data_ki_right(i),--: in std_logic_vector(7 downto 0); -- ext. pins
 				-- dataout
-				dataout => readout_dataout_right(511+512*i downto 512*i),--:  out std_logic_vector(511 downto 0); -- all data in one vector in oreder to facilitate data re-mapping
+				dataout => readout_dataout_right((511+64)+(512+64)*i downto (512+64)*i),--:  out std_logic_vector(511 downto 0); -- all data in one vector in oreder to facilitate data re-mapping
 				dataout_dv => open,--: out std_logic;
 				-- states
 				readout_process_state => open,--, 
@@ -457,7 +462,7 @@ i_clk_wiz : clk_wiz_div10
 				aresetn => nreset_readout,
 				s_axis_tvalid => readout_dataout_left_dv(0),
 				s_axis_tready => open,
-				s_axis_tdata => readout_dataout_left(511+512*i downto 512*i),
+				s_axis_tdata => readout_dataout_left((511+64)+(512+64)*i downto (512+64)*i),
 				m_axis_tvalid => m_axis_tvalid_left(i),
 				m_axis_tready => m_axis_tready_left(i),
 				m_axis_tdata => m_axis_tdata_left(7+8*i downto 8*i)
@@ -469,7 +474,7 @@ i_clk_wiz : clk_wiz_div10
 				aresetn => nreset_readout,
 				s_axis_tvalid => readout_dataout_left_dv(0),
 				s_axis_tready => open,
-				s_axis_tdata => readout_dataout_right(511+512*i downto 512*i),
+				s_axis_tdata => readout_dataout_right((511+64)+(512+64)*i downto (512+64)*i),
 				m_axis_tvalid => m_axis_tvalid_right(i),
 				m_axis_tready => m_axis_tready_right(i),
 				m_axis_tdata => m_axis_tdata_right(7+8*i downto 8*i)
