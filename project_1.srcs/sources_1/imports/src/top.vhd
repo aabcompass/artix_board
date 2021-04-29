@@ -31,6 +31,18 @@ end pmt_readout_top;
 
 architecture Behavioral of pmt_readout_top is
 
+function reverse_any_vector (a: in std_logic_vector)
+return std_logic_vector is
+  variable result: std_logic_vector(a'RANGE);
+  alias aa: std_logic_vector(a'REVERSE_RANGE) is a;
+begin
+  for i in aa'RANGE loop
+    result(i) := aa(i);
+  end loop;
+  return result;
+end; -- function reverse_any_vector
+
+
 	attribute keep_hierarchy : string;
 	attribute keep_hierarchy of Behavioral : architecture is "yes";
 
@@ -285,7 +297,26 @@ begin
 			dataout(dst*8 + 7 downto dst*8) <= dataout_unmapped(src*8 + 7 downto src*8);
 		end generate;
 	end generate;
-	dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
+	--dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
+--	dataout(512+64-1 downto 512) <= 
+--		  "00" & dataout_ki_unmapped(5+6*7 downto 0+6*7)
+--		& "00" & dataout_ki_unmapped(5+6*6 downto 0+6*6)
+--		& "00" & dataout_ki_unmapped(5+6*5 downto 0+6*5)
+--		& "00" & dataout_ki_unmapped(5+6*4 downto 0+6*4) 
+--		& "00" & dataout_ki_unmapped(5+6*3 downto 0+6*3) 
+--		& "00" & dataout_ki_unmapped(5+6*2 downto 0+6*2)
+--		& "00" & dataout_ki_unmapped(5+6*1 downto 0+6*1) 
+--		& "00" & dataout_ki_unmapped(5+6*0 downto 0+6*0);
+
+	dataout(512+64-1 downto 512) <= 
+		  "00" & reverse_any_vector(dataout_ki_unmapped(5+6*7+16 downto 0+6*7+16))
+		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*6+16 downto 0+6*6+16))
+		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*5+16 downto 0+6*5+16))
+		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*4+16 downto 0+6*4+16)) 
+		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*3+16 downto 0+6*3+16)) 
+		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*2+16 downto 0+6*2+16))
+		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*1+16 downto 0+6*1+16)) 
+		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*0+16 downto 0+6*0+16));
 
 
 end Behavioral;
