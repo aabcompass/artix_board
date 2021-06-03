@@ -237,6 +237,7 @@ architecture Behavioral of top_artix is
 	signal shift_time, shift_time_sc, shift_time_vio: std_logic_vector(2 downto 0) := (others => '0');
 	signal gen_mode, vio_influence: std_logic_vector(0 downto 0) := "0";
 	signal is_testmode2, is_testmode2_sync: std_logic:= '0';
+	signal frame_on, frame_on_sync: std_logic:= '0';
 	
    attribute keep : string;
 	attribute keep of ec_transmit_on_left_d1 : signal is "true";
@@ -308,6 +309,7 @@ i_clk_wiz : clk_wiz_div10
 	transmit_delay_sc <= sreg_input_reg(7 downto 4);
 	is_testmode2 <= sreg_input_reg(8);
 	reset_asic_odelay_cmd <= sreg_input_reg(9);
+	frame_on <= sreg_input_reg(10); 
 	
   xpm_cdc_single_inst : xpm_cdc_single
 	 generic map (
@@ -549,8 +551,50 @@ i_clk_wiz : clk_wiz_div10
 
 	end generate;
 	
-	m_axis_tvalid_hf <= (7 downto 0 => m_axis_tvalid_left_hf(0));
-	m_axis_tvalid_hf_2 <= m_axis_tvalid_hf when rising_edge(clk_serdes);
+	--m_axis_tvalid_hf <= (7 downto 0 => (m_axis_tvalid_left_hf(0) and frame_on_sync));
+	m_axis_tvalid_hf <= (7 downto 0 => (m_axis_tvalid_left_hf(0)));
+	--m_axis_tvalid_hf_2 <= m_axis_tvalid_hf when rising_edge(clk_serdes);
+
+	  xpm_frame_on : xpm_cdc_single
+   generic map (
+      DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+      INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+                           -- values
+      SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+      SRC_INPUT_REG => 0   -- DECIMAL; integer; 0=do not register input, 1=register input
+   )
+   port map (
+      dest_out => frame_on_sync, -- 1-bit output: src_in synchronized to the destination clock domain. This output
+                            -- is registered.
+
+      dest_clk => clk_serdes, -- 1-bit input: Clock signal for the destination clock domain.
+      src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+      src_in => frame_on      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
+   );
+
+	frame_on_process: process(clk_serdes)
+		variable state : integer range 0 to 3 := 0;
+	begin
+		if(rising_edge(clk_serdes)) then
+			case state is
+				when 0 => m_axis_tvalid_hf_2 <= (others => '0');
+									if(frame_on_sync = '1') then
+										state := state + 1;
+									end if;
+				when 1 => if(m_axis_tvalid_left_hf(0) = '0') then
+										state := state + 1;
+									end if;
+				when 2 => m_axis_tvalid_hf_2 <= m_axis_tvalid_hf;
+									if(frame_on_sync = '0') then
+										state := state + 1;
+									end if;
+				when 3 => m_axis_tvalid_hf_2 <= m_axis_tvalid_hf;
+									if(m_axis_tvalid_left_hf(0) = '0') then
+										state := 0;
+									end if;
+			end case;
+		end if; 
+	end process;
 
 	serdes_frame: serdes2zynq 
 		Port map( 
