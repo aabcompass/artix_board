@@ -337,3 +337,8 @@ set_property DRIVE 16 [get_ports ec_40MHz_2_n]
 set_property DRIVE 16 [get_ports ec_40MHz_2_p]
 set_property DRIVE 16 [get_ports ec_40MHz_3_n]
 set_property DRIVE 16 [get_ports ec_40MHz_3_p]
+
+set_property SLEW FAST [get_ports ec_40MHz_3_p]
+set_property SLEW FAST [get_ports ec_40MHz_3_n]
+set_property SLEW FAST [get_ports ec_40MHz_2_p]
+set_property SLEW FAST [get_ports ec_40MHz_2_n]
