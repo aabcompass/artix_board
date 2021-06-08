@@ -44,8 +44,9 @@ entity asic_odelay is
    		ec_clk_gtu_3_p, ec_clk_gtu_3_n: out std_logic;
     	ec_40MHz_2_p, ec_40MHz_2_n: out std_logic;
     	ec_40MHz_3_p, ec_40MHz_3_n: out std_logic;
+    	ec_40MHz_tst_p, ec_40MHz_tst_n: out std_logic;
     	-- params
-    	shift_time: in std_logic_vector(2 downto 0)
+    	shift_time: in std_logic_vector(2 downto 0) := "000"
     );
 end asic_odelay;
 
@@ -65,6 +66,19 @@ architecture Behavioral of asic_odelay is
     	OQ: out std_logic
     	);
 	end component;
+
+	component serses2asic_uni is
+    Port ( 
+    	CLK : in STD_LOGIC;
+    	CLKDIV : in STD_LOGIC;
+    	reset_serdes : in STD_LOGIC;
+    	front_sig: in STD_LOGIC_VECTOR(1 downto 0); --"01" - rising, "10" - falling, "00" - no sig
+    	shift_time: in std_logic_vector(2 downto 0);
+    	OQ: out std_logic;
+    	OQ_compl: out std_logic
+    	);
+	end component;
+
 	
 	signal clk_gtu_d1 : std_logic := '0';
 	signal clk_40MHZ_p_d1 : std_logic := '0';
@@ -102,30 +116,34 @@ begin
     	OQ => clk_gtu_i3--: out std_logic
     	);
 
-	i_serdes_clk40MHz2: serses2asic
+	i_serdes_clk40MHz2: serses2asic_uni
     Port map( 
     	CLK => clk,--: in STD_LOGIC;
     	CLKDIV =>  clkdiv,--: in STD_LOGIC;
     	reset_serdes => reset_serdes,--: in STD_LOGIC;
     	front_sig => front_sig_clk_40MHz,--: in STD_LOGIC_VECTOR(1 downto 0); --"01" - rising, "10" - falling, "00" - no sig
     	shift_time => shift_time,--: in std_logic_vector(1 downto 0);
-    	OQ => clk_40MHz2--: out std_logic
+    	OQ => ec_40MHz_2_p,--: out std_logic
+    	OQ_compl => ec_40MHz_2_n--: out std_logic
     	);
 
-	i_serdes_clk40MHz3: serses2asic
+	i_serdes_clk40MHz3: serses2asic_uni
     Port map( 
     	CLK => clk,--: in STD_LOGIC;
     	CLKDIV =>  clkdiv,--: in STD_LOGIC;
     	reset_serdes => reset_serdes,--: in STD_LOGIC;
     	front_sig => front_sig_clk_40MHz,--: in STD_LOGIC_VECTOR(1 downto 0); --"01" - rising, "10" - falling, "00" - no sig
     	shift_time => shift_time,--: in std_logic_vector(1 downto 0);
-    	OQ => clk_40MHz3--: out std_logic
+    	OQ => ec_40MHz_3_p,--: out std_logic
+    	OQ_compl => ec_40MHz_3_n--: out std_logic
     	);
 
 
 	inst_OBUFDS_gtu2: obufds port map(ec_clk_gtu_2_p, ec_clk_gtu_2_n, clk_gtu_i2);
 	inst_OBUFDS_gtu3: obufds port map(ec_clk_gtu_3_p, ec_clk_gtu_3_n, clk_gtu_i3);
-	inst_OBUFDS_clk40_2: obufds port map(ec_40MHz_2_p, ec_40MHz_2_n, clk_40MHz2);
-	inst_OBUFDS_clk40_3: obufds port map(ec_40MHz_3_p, ec_40MHz_3_n, clk_40MHz3);
+--	inst_OBUFDS_clk40_2: obufds port map(ec_40MHz_2_p, ec_40MHz_2_n, clk_40MHz2);
+--	inst_OBUFDS_clk40_3: obufds port map(ec_40MHz_3_p, ec_40MHz_3_n, clk_40MHz3);
+	--inst_OBUFDS_clk40_tst: obufds port map(ec_40MHz_tst_p, ec_40MHz_tst_n, clk_40MHz3);
+
 
 end Behavioral;

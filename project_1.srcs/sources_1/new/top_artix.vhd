@@ -36,6 +36,7 @@ entity top_artix is
       ec_clk_gtu_3_p, ec_clk_gtu_3_n: out std_logic;
       ec_40MHz_2_p, ec_40MHz_2_n: out std_logic;
       ec_40MHz_3_p, ec_40MHz_3_n: out std_logic;
+      --ec_40MHz_tst_p, ec_40MHz_tst_n: out std_logic;
       
       --! data to ZYNQ
       zynq_frame_p, zynq_frame_n: out std_logic; --!< Frame diff signal for data transfer from Artix to Zynq
@@ -116,6 +117,7 @@ architecture Behavioral of top_artix is
    		ec_clk_gtu_3_p, ec_clk_gtu_3_n: out std_logic;
     	ec_40MHz_2_p, ec_40MHz_2_n: out std_logic;
     	ec_40MHz_3_p, ec_40MHz_3_n: out std_logic;
+    	ec_40MHz_tst_p, ec_40MHz_tst_n: out std_logic;
     	-- params
     	shift_time: in std_logic_vector(2 downto 0)
     );
@@ -380,7 +382,9 @@ i_clk_wiz : clk_wiz_div10
     	ec_40MHz_2_n => ec_40MHz_2_n,--: out std_logic;
     	ec_40MHz_3_p => ec_40MHz_3_p,--, 
     	ec_40MHz_3_n => ec_40MHz_3_n,--: out std_logic;
-    	-- params
+     	ec_40MHz_tst_p => open,--, 
+    	ec_40MHz_tst_n => open,--: out std_logic;
+   	-- params
     	shift_time => shift_time--: in std_logic_vector(1 downto 0)
     );
 	
@@ -391,14 +395,14 @@ i_clk_wiz : clk_wiz_div10
 
   -- PMT readout instantiate
 
-	i_vio_0 : vio_0
-  PORT MAP (
-    clk => clk_ec,
-    probe_out0 => transmit_delay_vio,
-    probe_out1 => shift_time_vio,
-    probe_out2 => vio_influence
-	--transmit_delay <= X"7"
-  );
+--	i_vio_0 : vio_0
+--  PORT MAP (
+--    clk => clk_ec,
+--    probe_out0 => transmit_delay_vio,
+--    probe_out1 => shift_time_vio,
+--    probe_out2 => vio_influence
+--	--transmit_delay <= X"7"
+--  );
   
   timings_param_selector: process(clk_ec)
   begin

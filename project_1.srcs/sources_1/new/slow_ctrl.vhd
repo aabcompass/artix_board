@@ -39,7 +39,7 @@ entity slow_ctrl is
            sr_in : in STD_LOGIC;
            sr_out : out STD_LOGIC;
            latch : in STD_LOGIC;
-           sreg_input_reg: out std_logic_vector(31 downto 0);
+           sreg_input_reg: out std_logic_vector(31 downto 0) := (others => '0');
            sreg_output_reg: in std_logic_vector(31 downto 0));
 end slow_ctrl;
 

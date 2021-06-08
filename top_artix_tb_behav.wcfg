@@ -7,19 +7,20 @@
          <top_modules>
             <top_module name="glbl" />
             <top_module name="top_artix_tb" />
+            <top_module name="vcomponents" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="5721650000fs"></ZoomStartTime>
-      <ZoomEndTime time="5782850001fs"></ZoomEndTime>
-      <Cursor1Time time="10752500000fs"></Cursor1Time>
+      <ZoomStartTime time="13541233000fs"></ZoomStartTime>
+      <ZoomEndTime time="13659233001fs"></ZoomEndTime>
+      <Cursor1Time time="13589033000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="259"></NameColumnWidth>
-      <ValueColumnWidth column_width="92"></ValueColumnWidth>
+      <ValueColumnWidth column_width="84"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="28" />
+   <WVObjectSize size="40" />
    <wave_markers>
       <marker label="" time="46877599000" />
       <marker label="" time="15567500000" />
@@ -58,12 +59,12 @@
       <obj_property name="DisplayName">label</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left">
-      <obj_property name="ElementShortName">readout_dataout_left[3071:0]</obj_property>
-      <obj_property name="ObjectShortName">readout_dataout_left[3071:0]</obj_property>
+      <obj_property name="ElementShortName">readout_dataout_left[3455:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_dataout_left[3455:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_right">
-      <obj_property name="ElementShortName">readout_dataout_right[3071:0]</obj_property>
-      <obj_property name="ObjectShortName">readout_dataout_right[3071:0]</obj_property>
+      <obj_property name="ElementShortName">readout_dataout_right[3455:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_dataout_right[3455:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left_dv">
       <obj_property name="ElementShortName">readout_dataout_left_dv[5:0]</obj_property>
@@ -136,5 +137,53 @@
    <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_clk_gtu_2_p">
       <obj_property name="ElementShortName">ec_clk_gtu_2_p</obj_property>
       <obj_property name="ObjectShortName">ec_clk_gtu_2_p</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider29" type="divider">
+      <obj_property name="label">---</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/CLK">
+      <obj_property name="ElementShortName">CLK</obj_property>
+      <obj_property name="ObjectShortName">CLK</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/CLKDIV">
+      <obj_property name="ElementShortName">CLKDIV</obj_property>
+      <obj_property name="ObjectShortName">CLKDIV</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/reset_serdes">
+      <obj_property name="ElementShortName">reset_serdes</obj_property>
+      <obj_property name="ObjectShortName">reset_serdes</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/front_sig">
+      <obj_property name="ElementShortName">front_sig[1:0]</obj_property>
+      <obj_property name="ObjectShortName">front_sig[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/shift_time">
+      <obj_property name="ElementShortName">shift_time[2:0]</obj_property>
+      <obj_property name="ObjectShortName">shift_time[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/OQ">
+      <obj_property name="ElementShortName">OQ</obj_property>
+      <obj_property name="ObjectShortName">OQ</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/rising_sig">
+      <obj_property name="ElementShortName">rising_sig[5:0]</obj_property>
+      <obj_property name="ObjectShortName">rising_sig[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/falling_sig">
+      <obj_property name="ElementShortName">falling_sig[5:0]</obj_property>
+      <obj_property name="ObjectShortName">falling_sig[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/i_asic_odelay/i_serdes_clk40MHz2/sig">
+      <obj_property name="ElementShortName">sig[5:0]</obj_property>
+      <obj_property name="ObjectShortName">sig[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_40MHz_2_p">
+      <obj_property name="ElementShortName">ec_40MHz_2_p</obj_property>
+      <obj_property name="ObjectShortName">ec_40MHz_2_p</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_40MHz_2_n">
+      <obj_property name="ElementShortName">ec_40MHz_2_n</obj_property>
+      <obj_property name="ObjectShortName">ec_40MHz_2_n</obj_property>
    </wvobject>
 </wave_config>
