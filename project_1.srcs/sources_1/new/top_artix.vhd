@@ -20,7 +20,7 @@ use xpm.vcomponents.all;
 --
 
 entity top_artix is
-    --generic(gen_mode : std_logic := '1');
+    generic(CLK_RATIO : integer := 100);
     Port 
     ( 
       --! system
@@ -93,6 +93,20 @@ architecture Behavioral of top_artix is
 		locked            : out    std_logic
 	 );
 	end component;
+
+	component clk_ec_gen
+	port
+	 (-- Clock in ports
+		-- Clock out ports
+		clk_ec          : out    std_logic;
+		clk_hf          : out    std_logic;
+		clk_ec_serdes          : out    std_logic;
+		-- Status and control signals
+		reset             : in     std_logic;
+		locked            : out    std_logic;
+		clk_in1           : in     std_logic
+	 );
+	 end component;
 
 	COMPONENT slow_ctrl is
 			Port ( clk : in STD_LOGIC;
@@ -183,6 +197,7 @@ architecture Behavioral of top_artix is
 	end COMPONENT;
 
 	signal clk_ec: std_logic;
+	signal clk_200MHz: std_logic;
 	signal clk_hf: std_logic; --half of clk_ec
 	signal clk_serdes : std_logic;
 	signal clk_serdes_shifted : std_logic;
@@ -190,7 +205,8 @@ architecture Behavioral of top_artix is
 
 	signal clk_gtu_i: std_logic;
 	
-	signal locked_i, locked_ec_d1, locked_ec_d2, locked_z_d1, locked_z_d2: std_logic := '0';
+	signal locked_i, locked_clk_ec, locked_ec_d1, locked_ec_d2, locked_z_d1, locked_z_d2: std_logic := '0';
+	signal clk_wiz_div10_rst: std_logic;
 	
 	signal artix_40mhz_0_i, artix_40mhz_1_i: std_logic := '0';
 	signal reset_readout, nreset_readout, rst_fifo: std_logic := '1';
@@ -254,24 +270,39 @@ begin
 	sr_ck_frw_out0 <= sr_ck_frw_in;
 	sr_ck_frw_out1 <= sr_ck_frw_in;
 
-
-i_clk_wiz : clk_wiz_div10
+	i_clk_ec_gen : clk_ec_gen
    port map ( 
-   -- Clock in ports
-   clk_in_pri => clk_pri,
-   reset => '0',
-  -- Clock out ports  
-   clk_ec => clk_ec,
-   clk_ec_hf => clk_hf,
-   clk_serdes => clk_serdes,
-   clk_serdes_shifted => clk_serdes_shifted,
-   clk_serdes2asic => clk_ec_serdes,
-  -- Status and control signals                
-   locked => locked_i            
+   -- Clock out ports  
+    clk_ec => clk_ec,
+    clk_ec_serdes => clk_ec_serdes,
+    clk_hf => clk_hf,
+   -- Status and control signals                
+    reset => '0',
+    locked => locked_clk_ec,
+    -- Clock in ports
+    clk_in1 => clk_pri--clk_hf
+  );
+
+	clk_wiz_div10_rst <= not locked_clk_ec;
+
+	i_clk_wiz : clk_wiz_div10
+   port map ( 
+    -- Clock in ports
+    clk_in_pri => clk_hf,
+    reset => clk_wiz_div10_rst,
+    -- Clock out ports  
+    clk_ec => clk_200MHz,--clk_ec,
+    clk_ec_hf => open, --clk_hf,
+    clk_serdes => clk_serdes,
+    clk_serdes_shifted => clk_serdes_shifted,
+    clk_serdes2asic => open,--clk_ec_serdes,
+    -- Status and control signals                
+    locked => locked_i            
  );
 	
-	locked_ec_d1 <= locked_i when rising_edge(clk_ec);
-	locked_ec_d2 <= locked_ec_d1 when rising_edge(clk_ec);
+		
+	locked_ec_d1 <= locked_clk_ec when rising_edge(clk_ec);
+	locked_ec_d2 <= locked_clk_ec when rising_edge(clk_ec);
 	locked_z_d1 <= locked_i when rising_edge(clk_hf);
 	locked_z_d2 <= locked_z_d1 when rising_edge(clk_hf);
 		
@@ -298,7 +329,7 @@ i_clk_wiz : clk_wiz_div10
 	end process;
 
 	i_sc: slow_ctrl 
-			Port map( clk => clk_ec,--: in STD_LOGIC;
+			Port map( clk => clk_200MHz,--: in STD_LOGIC;
 							sr_ck => sr_ck,--: in STD_LOGIC;
 						 sr_in => sr_in,--: in STD_LOGIC;
 						 sr_out => sr_out,--: out STD_LOGIC;
@@ -306,9 +337,9 @@ i_clk_wiz : clk_wiz_div10
 						 sreg_input_reg => sreg_input_reg,--: out std_logic_vector(31 downto 0);
 						 sreg_output_reg => sreg_output_reg);--: in std_logic_vector(31 downto 0));
 
-	shift_time_sc <= sreg_input_reg(2 downto 0);
-	gen_mode(0) <= sreg_input_reg(3);
-	transmit_delay_sc <= sreg_input_reg(7 downto 4);
+	shift_time_sc <= sreg_input_reg(2 downto 0) when rising_edge(clk_ec);
+	gen_mode(0) <= sreg_input_reg(3)  when rising_edge(clk_ec);
+	transmit_delay_sc <= sreg_input_reg(7 downto 4)  when rising_edge(clk_ec);
 	is_testmode2 <= sreg_input_reg(8);
 	reset_asic_odelay_cmd <= sreg_input_reg(9);
 	frame_on <= sreg_input_reg(10); 
@@ -328,8 +359,7 @@ i_clk_wiz : clk_wiz_div10
 	    dest_clk => clk_serdes, -- 1-bit input: Clock signal for the destination clock domain.
 	    src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
 	    src_in => is_testmode2      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
-	 );
-	
+	 );	
 
   readout_clk_former_process: process(clk_ec)	
 		variable state : integer range 0 to 1 := 0;
@@ -350,7 +380,7 @@ i_clk_wiz : clk_wiz_div10
 										end if;
 										clk_40MHZ_p_i <= not clk_40MHZ_p_i;
 										clk_gtu_i <= '0';
-					when 1 => if(readout_clk_counter = (2*98-1)) then
+					when 1 => if(readout_clk_counter = (2*(CLK_RATIO-2)-1)) then
 											state := 0;
 											readout_clk_counter <= (others => '0');
 										else

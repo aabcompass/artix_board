@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="13541233000fs"></ZoomStartTime>
-      <ZoomEndTime time="13659233001fs"></ZoomEndTime>
-      <Cursor1Time time="13589033000fs"></Cursor1Time>
+      <ZoomStartTime time="15696666666fs"></ZoomStartTime>
+      <ZoomEndTime time="16294666667fs"></ZoomEndTime>
+      <Cursor1Time time="16001666000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="259"></NameColumnWidth>
-      <ValueColumnWidth column_width="84"></ValueColumnWidth>
+      <NameColumnWidth column_width="258"></NameColumnWidth>
+      <ValueColumnWidth column_width="77"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="40" />
+   <WVObjectSize size="58" />
    <wave_markers>
       <marker label="" time="46877599000" />
       <marker label="" time="15567500000" />
@@ -185,5 +185,77 @@
    <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_40MHz_2_n">
       <obj_property name="ElementShortName">ec_40MHz_2_n</obj_property>
       <obj_property name="ObjectShortName">ec_40MHz_2_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider41" type="divider">
+      <obj_property name="label">ASIC</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_40MHz_2_p">
+      <obj_property name="ElementShortName">ec_40MHz_2_p</obj_property>
+      <obj_property name="ObjectShortName">ec_40MHz_2_p</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_clk_gtu_2_p">
+      <obj_property name="ElementShortName">ec_clk_gtu_2_p</obj_property>
+      <obj_property name="ObjectShortName">ec_clk_gtu_2_p</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider145" type="divider">
+      <obj_property name="label">CLKS</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_ec_gen/clk_ec">
+      <obj_property name="ElementShortName">clk_ec</obj_property>
+      <obj_property name="ObjectShortName">clk_ec</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_ec_gen/clk_ec_serdes">
+      <obj_property name="ElementShortName">clk_ec_serdes</obj_property>
+      <obj_property name="ObjectShortName">clk_ec_serdes</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_ec_gen/clk_hf">
+      <obj_property name="ElementShortName">clk_hf</obj_property>
+      <obj_property name="ObjectShortName">clk_hf</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_ec_gen/reset">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_ec_gen/locked">
+      <obj_property name="ElementShortName">locked</obj_property>
+      <obj_property name="ObjectShortName">locked</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_ec_gen/clk_in1">
+      <obj_property name="ElementShortName">clk_in1</obj_property>
+      <obj_property name="ObjectShortName">clk_in1</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/clk_ec">
+      <obj_property name="ElementShortName">clk_ec</obj_property>
+      <obj_property name="ObjectShortName">clk_ec</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/clk_ec_hf">
+      <obj_property name="ElementShortName">clk_ec_hf</obj_property>
+      <obj_property name="ObjectShortName">clk_ec_hf</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/clk_in_pri">
+      <obj_property name="ElementShortName">clk_in_pri</obj_property>
+      <obj_property name="ObjectShortName">clk_in_pri</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/clk_serdes">
+      <obj_property name="ElementShortName">clk_serdes</obj_property>
+      <obj_property name="ObjectShortName">clk_serdes</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/clk_serdes2asic">
+      <obj_property name="ElementShortName">clk_serdes2asic</obj_property>
+      <obj_property name="ObjectShortName">clk_serdes2asic</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/clk_serdes_shifted">
+      <obj_property name="ElementShortName">clk_serdes_shifted</obj_property>
+      <obj_property name="ObjectShortName">clk_serdes_shifted</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/locked">
+      <obj_property name="ElementShortName">locked</obj_property>
+      <obj_property name="ObjectShortName">locked</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/i_clk_wiz/reset">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
    </wvobject>
 </wave_config>
