@@ -78,22 +78,20 @@ architecture Behavioral of top_artix is
 	END COMPONENT;
 
 
-	component clk_wiz_div10
-	port
-	 (-- Clock in ports
-		clk_in_pri           : in     std_logic;
-		reset           : in     std_logic;
-		-- Clock out ports
-		clk_ec          : out    std_logic;
-		clk_ec_hf          : out    std_logic;
-		clk_serdes          : out    std_logic;
-		clk_serdes_shifted          : out    std_logic;
-		clk_serdes2asic          : out    std_logic;
-		-- Status and control signals
-		locked            : out    std_logic
-	 );
-	end component;
-
+component clk_wiz_div10
+port
+ (-- Clock in ports
+  -- Clock out ports
+  clk_200MHz          : out    std_logic;
+  clk_100MHz          : out    std_logic;
+  clk_serdes          : out    std_logic;
+  clk_serdes_shifted          : out    std_logic;
+  -- Status and control signals
+  reset             : in     std_logic;
+  locked            : out    std_logic;
+  clk_in_pri           : in     std_logic
+ );
+end component;
 	component clk_ec_gen
 	port
 	 (-- Clock in ports
@@ -291,11 +289,10 @@ begin
     clk_in_pri => clk_hf,
     reset => clk_wiz_div10_rst,
     -- Clock out ports  
-    clk_ec => clk_200MHz,--clk_ec,
-    clk_ec_hf => open, --clk_hf,
+    clk_200MHz => clk_200MHz,--clk_ec,
+    clk_100MHz => open, --clk_hf,
     clk_serdes => clk_serdes,
     clk_serdes_shifted => clk_serdes_shifted,
-    clk_serdes2asic => open,--clk_ec_serdes,
     -- Status and control signals                
     locked => locked_i            
  );
@@ -337,14 +334,85 @@ begin
 						 sreg_input_reg => sreg_input_reg,--: out std_logic_vector(31 downto 0);
 						 sreg_output_reg => sreg_output_reg);--: in std_logic_vector(31 downto 0));
 
-	shift_time_sc <= sreg_input_reg(2 downto 0) when rising_edge(clk_ec);
-	gen_mode(0) <= sreg_input_reg(3)  when rising_edge(clk_ec);
-	transmit_delay_sc <= sreg_input_reg(7 downto 4)  when rising_edge(clk_ec);
+
 	is_testmode2 <= sreg_input_reg(8);
-	reset_asic_odelay_cmd <= sreg_input_reg(9);
 	frame_on <= sreg_input_reg(10); 
 	
+	 xpm_cdc_gen_mode0 : xpm_cdc_single
+	 generic map (
+	    DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+	    INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+	                         -- values
+	    SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+	    SRC_INPUT_REG => 0   -- DECIMAL; integer; 0=do not register input, 1=register input
+	 )
+	 port map (
+	    dest_out => gen_mode(0), -- 1-bit output: src_in synchronized to the destination clock domain. This output
+	                          -- is registered.
+
+	    dest_clk => clk_ec, -- 1-bit input: Clock signal for the destination clock domain.
+	    src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+	    src_in => sreg_input_reg(3)      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
+	 );	
+
+  xpm_cdc_transmit_delay_sc : xpm_cdc_array_single
+   generic map (
+      DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+      INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+                           -- values
+      SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+      SRC_INPUT_REG => 0,  -- DECIMAL; 0=do not register input, 1=register input
+      WIDTH => 4           -- DECIMAL; range: 1-1024
+   )
+   port map (
+      dest_out => transmit_delay_sc, -- WIDTH-bit output: src_in synchronized to the destination clock domain. This
+                            -- output is registered.
+
+      dest_clk => clk_ec, -- 1-bit input: Clock signal for the destination clock domain.
+      src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+      src_in => sreg_input_reg(7 downto 4)     -- WIDTH-bit input: Input single-bit array to be synchronized to destination clock
+   );
+
+
+
+
+   xpm_cdc_shift_time_sc : xpm_cdc_array_single
+   generic map (
+      DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+      INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+                           -- values
+      SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+      SRC_INPUT_REG => 0,  -- DECIMAL; 0=do not register input, 1=register input
+      WIDTH => 3           -- DECIMAL; range: 1-1024
+   )
+   port map (
+      dest_out => shift_time_sc, -- WIDTH-bit output: src_in synchronized to the destination clock domain. This
+                            -- output is registered.
+
+      dest_clk => clk_ec, -- 1-bit input: Clock signal for the destination clock domain.
+      src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+      src_in => sreg_input_reg(2 downto 0)      -- WIDTH-bit input: Input single-bit array to be synchronized to destination clock
+    );
+
   xpm_cdc_single_inst : xpm_cdc_single
+	 generic map (
+	    DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+	    INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+	                         -- values
+	    SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+	    SRC_INPUT_REG => 0   -- DECIMAL; integer; 0=do not register input, 1=register input
+	 )
+	 port map (
+	    dest_out => reset_asic_odelay_cmd, -- 1-bit output: src_in synchronized to the destination clock domain. This output
+	                          -- is registered.
+
+	    dest_clk => clk_ec, -- 1-bit input: Clock signal for the destination clock domain.
+	    src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+	    src_in => sreg_input_reg(9)      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
+	 );	
+
+	
+  xpm_cdc_is_testmode2_sync : xpm_cdc_single
 	 generic map (
 	    DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
 	    INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
@@ -356,7 +424,7 @@ begin
 	    dest_out => is_testmode2_sync, -- 1-bit output: src_in synchronized to the destination clock domain. This output
 	                          -- is registered.
 
-	    dest_clk => clk_serdes, -- 1-bit input: Clock signal for the destination clock domain.
+	    dest_clk => clk_hf, -- 1-bit input: Clock signal for the destination clock domain.
 	    src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
 	    src_in => is_testmode2      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
 	 );	
@@ -543,10 +611,10 @@ begin
 				m_axis_tready => '1',
 				m_axis_tdata => m_axis_tdata_right_hf(7+8*i downto 8*i)
 			);
-	test_mode2_select: process(clk_serdes)
+	test_mode2_select: process(clk_hf)
 		variable artix_addr_mode: std_logic_vector(1 downto 0);
 	begin
-		if(rising_edge(clk_serdes)) then
+		if(rising_edge(clk_hf)) then
 			--artix_addr_mode
 			case artix_addr is
 				when "00" => artix_addr_mode := "10";
@@ -601,15 +669,15 @@ begin
       dest_out => frame_on_sync, -- 1-bit output: src_in synchronized to the destination clock domain. This output
                             -- is registered.
 
-      dest_clk => clk_serdes, -- 1-bit input: Clock signal for the destination clock domain.
+      dest_clk => clk_hf, -- 1-bit input: Clock signal for the destination clock domain.
       src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
       src_in => frame_on      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
    );
 
-	frame_on_process: process(clk_serdes)
+	frame_on_process: process(clk_hf)
 		variable state : integer range 0 to 3 := 0;
 	begin
-		if(rising_edge(clk_serdes)) then
+		if(rising_edge(clk_hf)) then
 			case state is
 				when 0 => m_axis_tvalid_hf_2 <= (others => '0');
 									if(frame_on_sync = '1') then
