@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="15696666666fs"></ZoomStartTime>
-      <ZoomEndTime time="16294666667fs"></ZoomEndTime>
-      <Cursor1Time time="16001666000fs"></Cursor1Time>
+      <ZoomStartTime time="13099200000fs"></ZoomStartTime>
+      <ZoomEndTime time="16109200001fs"></ZoomEndTime>
+      <Cursor1Time time="15355000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="258"></NameColumnWidth>
+      <NameColumnWidth column_width="254"></NameColumnWidth>
       <ValueColumnWidth column_width="77"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="58" />
+   <WVObjectSize size="59" />
    <wave_markers>
       <marker label="" time="46877599000" />
       <marker label="" time="15567500000" />
@@ -101,6 +101,10 @@
    <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/serdes_left/datain">
       <obj_property name="ElementShortName">datain[7:0]</obj_property>
       <obj_property name="ObjectShortName">datain[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/m_axis_tvalid_hf">
+      <obj_property name="ElementShortName">m_axis_tvalid_hf[7:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tvalid_hf[7:0]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/serdes_left/OQ">
       <obj_property name="ElementShortName">OQ</obj_property>

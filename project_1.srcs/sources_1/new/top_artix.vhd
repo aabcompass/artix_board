@@ -20,7 +20,7 @@ use xpm.vcomponents.all;
 --
 
 entity top_artix is
-    generic(CLK_RATIO : integer := 100);
+    generic(CLK_RATIO : integer := 75);
     Port 
     ( 
       --! system
