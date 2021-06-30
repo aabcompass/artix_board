@@ -20,7 +20,7 @@ use xpm.vcomponents.all;
 --
 
 entity top_artix is
-    generic(CLK_RATIO : integer := 75);
+    generic(CLK_RATIO : integer := 70);
     Port 
     ( 
       --! system
@@ -141,6 +141,7 @@ end component;
   		-- clks resets
   		clk_sp : in  STD_LOGIC; -- SPACIROC redout clock (80 MHz)
   		clk_gtu : in  STD_LOGIC; -- 400 kHz clock (really not clock, but signal)
+  		transmit_on : in  STD_LOGIC; 
   		reset: in std_logic;	
   		gen_mode: in std_logic;	
   		-- ext io
@@ -258,6 +259,7 @@ end component;
    attribute keep : string;
 	attribute keep of ec_transmit_on_left_d1 : signal is "true";
 	attribute keep of ec_transmit_on_right_d1 : signal is "true";
+	attribute keep of clk_gtu_i : signal is "true";
 	
 	
 begin
@@ -429,38 +431,90 @@ begin
 	    src_in => is_testmode2      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
 	 );	
 
-  readout_clk_former_process: process(clk_ec)	
+--  readout_clk_former_process: process(clk_ec)	
+--		variable state : integer range 0 to 1 := 0;
+--	begin
+--		if(rising_edge(clk_ec)) then
+--			if(reset_readout = '1') then
+--				state := 0;
+--				readout_clk_counter <= (others => '0');
+--				clk_40MHZ_p_i <= '0';
+--				clk_gtu_i <= '0';
+--			else
+--				case state is
+--					when 0 => if(readout_clk_counter = (2*2-1)) then
+--											state := state + 1;
+--											readout_clk_counter <= (others => '0');
+--										else	
+--											readout_clk_counter <= readout_clk_counter + 1;
+--										end if;
+--										clk_40MHZ_p_i <= not clk_40MHZ_p_i;
+--										clk_gtu_i <= '0';
+--					when 1 => if(readout_clk_counter = (2*(CLK_RATIO-2)-1)) then
+--											state := 0;
+--											readout_clk_counter <= (others => '0');
+--										else
+--											readout_clk_counter <= readout_clk_counter + 1;
+--										end if;
+--										clk_40MHZ_p_i <= not clk_40MHZ_p_i;
+--										clk_gtu_i <= '1';
+--					when 2 => state := 0;
+--				end case;
+--			end if;
+--		end if;
+--	end process;
+	
+		clk_redout_former : process(clk_ec)
+		variable state : integer range 0 to 2 := 0;
+	begin
+		if(rising_edge(clk_ec)) then
+			if(reset_readout = '1') then
+				state := 0;
+			else
+					case state is
+						when 0 => clk_40MHZ_p_i <= '1'; state := state + 1;
+						when 1 => clk_40MHZ_p_i <= '0'; state := state + 1;
+						when 2 => clk_40MHZ_p_i <= '0'; state := 0;
+					end case;
+				
+			end if;
+		end if;
+	end process;
+	
+	
+	clk_gtu_former : process(clk_ec)	
 		variable state : integer range 0 to 1 := 0;
 	begin
 		if(rising_edge(clk_ec)) then
 			if(reset_readout = '1') then
 				state := 0;
-				readout_clk_counter <= (others => '0');
-				clk_40MHZ_p_i <= '0';
 				clk_gtu_i <= '0';
 			else
-				case state is
-					when 0 => if(readout_clk_counter = (2*2-1)) then
-											state := state + 1;
-											readout_clk_counter <= (others => '0');
-										else	
-											readout_clk_counter <= readout_clk_counter + 1;
-										end if;
-										clk_40MHZ_p_i <= not clk_40MHZ_p_i;
-										clk_gtu_i <= '0';
-					when 1 => if(readout_clk_counter = (2*(CLK_RATIO-2)-1)) then
-											state := 0;
-											readout_clk_counter <= (others => '0');
-										else
-											readout_clk_counter <= readout_clk_counter + 1;
-										end if;
-										clk_40MHZ_p_i <= not clk_40MHZ_p_i;
-										clk_gtu_i <= '1';
-				end case;
+				if(clk_40MHZ_p_i = '1') then
+					case state is
+						when 0 => 
+							if(readout_clk_counter = (2-1)) then
+								state := state + 1;
+								readout_clk_counter <= (others => '0');
+							else	
+								readout_clk_counter <= readout_clk_counter + 1;
+							end if;
+							clk_gtu_i <= '0';
+						when 1 => 
+							if(readout_clk_counter = ((CLK_RATIO-2)-1)) then
+								state := 0;
+								readout_clk_counter <= (others => '0');
+							else
+								readout_clk_counter <= readout_clk_counter + 1;
+							end if;	
+              clk_gtu_i <= '1';				
+					end case;
+				end if;
 			end if;
 		end if;
 	end process;
 
+							
 	reset_asic_odelay <= reset_readout or reset_asic_odelay_cmd;
 
  i_asic_odelay: asic_odelay 
@@ -525,6 +579,7 @@ begin
 				-- clks resets
 				clk_sp => clk_ec, --: in  STD_LOGIC; -- SPACIROC redout clock (80 MHz)
 				clk_gtu => clk_gtu_i,-- : in  STD_LOGIC; -- 400 kHz clock (really not clock, but signal)
+				transmit_on => ec_transmit_on_left(i),
 				reset => reset_readout,--: in std_logic;	
 				gen_mode => gen_mode(0),	
 				-- ext io
@@ -545,6 +600,7 @@ begin
 				-- clks resets
 				clk_sp => clk_ec, --: in  STD_LOGIC; -- SPACIROC redout clock (80 MHz)
 				clk_gtu => clk_gtu_i,-- : in  STD_LOGIC; -- 400 kHz clock (really not clock, but signal)
+				transmit_on => ec_transmit_on_right(i),
 				reset => reset_readout,--: in std_logic;
 				gen_mode => gen_mode(0),		
 				-- ext io

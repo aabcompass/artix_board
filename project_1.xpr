@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="36" Path="/home/alx/xil_proj/artix_board/master_03/project_1.xpr">
+<Project Version="7" Minor="36" Path="/home/alx/xil_proj/artix_board/master_05/project_1.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="385e96bbf3a14ab8b06563c694bd1c0d"/>
@@ -32,20 +32,20 @@
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSAVendor" Val="xilinx"/>
     <Option Name="DSANumComputeUnits" Val="60"/>
-    <Option Name="WTXSimLaunchSim" Val="52"/>
+    <Option Name="WTXSimLaunchSim" Val="57"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="70"/>
-    <Option Name="WTModelSimExportSim" Val="70"/>
-    <Option Name="WTQuestaExportSim" Val="70"/>
-    <Option Name="WTIesExportSim" Val="70"/>
-    <Option Name="WTVcsExportSim" Val="70"/>
-    <Option Name="WTRivieraExportSim" Val="70"/>
-    <Option Name="WTActivehdlExportSim" Val="70"/>
+    <Option Name="WTXSimExportSim" Val="75"/>
+    <Option Name="WTModelSimExportSim" Val="75"/>
+    <Option Name="WTQuestaExportSim" Val="75"/>
+    <Option Name="WTIesExportSim" Val="75"/>
+    <Option Name="WTVcsExportSim" Val="75"/>
+    <Option Name="WTRivieraExportSim" Val="75"/>
+    <Option Name="WTActivehdlExportSim" Val="75"/>
     <Option Name="GenerateIPUpgradeLog" Val="TRUE"/>
     <Option Name="XSimRadix" Val="hex"/>
     <Option Name="XSimTimeUnit" Val="ns"/>
@@ -144,7 +144,7 @@
         </FileInfo>
       </File>
       <Config>
-        <Option Name="TargetConstrsFile" Val="$PSRCDIR/constrs_1/new/pins.xdc"/>
+        <Option Name="TargetConstrsFile" Val="$PSRCDIR/constrs_1/new/chipscope.xdc"/>
         <Option Name="ConstrsType" Val="XDC"/>
       </Config>
     </FileSet>

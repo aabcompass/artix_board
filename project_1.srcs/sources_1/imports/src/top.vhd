@@ -13,6 +13,7 @@ entity pmt_readout_top is
 		-- clks resets
 		clk_sp : in  STD_LOGIC; -- SPACIROC redout clock (80 MHz)
 		clk_gtu : in  STD_LOGIC; -- 400 kHz clock (really not clock, but signal)
+		transmit_on : in  STD_LOGIC; 
 		reset: in std_logic;		
 		gen_mode: in std_logic;
 		-- ext io
@@ -141,7 +142,7 @@ begin
 	
 	-- readout_process_v2
 	readout_process_v2: process(clk)
-		variable state : integer range 0 to 4 := 0;
+		variable state : integer range 0 to 6 := 0;
 	begin
 		if(rising_edge(clk)) then
 			if(reset = '1') then
@@ -159,7 +160,10 @@ begin
 					when 1 => if(clk_gtu_i = '1') then
 											state := state + 1;
 										end if;
-					when 2 => if(delay_counter = transmit_delay) then
+					when 2 => if(transmit_on = '1') then
+											state := state + 1;
+										end if;
+					when 3 => if(delay_counter = transmit_delay) then
 											state := state + 1;
 											delay_counter <= "0000";
 										else
@@ -167,7 +171,7 @@ begin
 										end if;
 										readout_bit_counter <= "000000";
 					-- readout
-					when 3 => for i in 0 to 7 loop
+					when 4 => for i in 0 to 7 loop
 											readout_channels_gray(7+i*8 downto i*8) <= readout_channels_gray(6+i*8 downto i*8) & x_data_pc_binary(i);
 										end loop;
 										readout_channels_ki_gray(7 downto 0) <= readout_channels_ki_gray(6 downto 0) & x_data_ki_binary;
@@ -177,13 +181,14 @@ begin
 										else
 											readout_channels_gray_dv <= '0';
 										end if;
-					when 4 => readout_channels_gray_dv <= '0';
+					when 5 => readout_channels_gray_dv <= '0';
 										if(readout_bit_counter = "111111") then
 											state := 0;
 										else
-											state := state - 1;
+											state := state + 1;
 											readout_bit_counter <= readout_bit_counter + 1;
 										end if;
+					when 6 => state := state -2;
 				end case;				
 			end if;
 		end if;
