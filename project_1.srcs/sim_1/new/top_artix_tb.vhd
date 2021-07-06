@@ -10,7 +10,7 @@ end top_artix_tb;
 architecture Behavioral of top_artix_tb is
 
 	component top_artix
-			--generic(gen_mode : std_logic := '1');
+			generic(IS_SIM: std_logic:= '1');
 			Port 
 			( 
      --! system
@@ -58,7 +58,11 @@ architecture Behavioral of top_artix_tb is
 
 	signal clk_pri: std_logic := '0';
 	signal ec_40MHz_2_p: std_logic := '0';
+	signal gtu: std_logic := '0';
+	signal transmit_on: std_logic := '0';
+	signal is_transmit_on: std_logic := '1';
 	signal ec_data_left: std_logic_vector(47 downto 0) := (others => '0');
+	signal ec_transmit_on_left, ec_transmit_on_right: std_logic_vector(5 downto 0) := (others => '0');
 	
 begin
 
@@ -79,7 +83,7 @@ begin
 	
 	
 	dut: top_artix 
-	--generic map (gen_mode => '1')
+	generic map (IS_SIM => '1')
 	port map
 	(
 		clk_pri => clk_pri,
@@ -88,10 +92,47 @@ begin
 		ec_40MHz_2_p => ec_40MHz_2_p,
 		ec_data_left => ec_data_left,
 		ec_data_right => (others => '0'),
-		ec_transmit_on_left => (others => '0'),
-		ec_transmit_on_right => (others => '0'),
+		ec_transmit_on_left => ec_transmit_on_left,
+		ec_transmit_on_right => ec_transmit_on_right,
 		sr_ck_frw_in => '0',
-		bitstream_in => '0'	
+		bitstream_in => '0',
+		ec_clk_gtu_2_p => gtu
 	);
+	
+	ec_transmit_on_left <= (others => transmit_on);
+	ec_transmit_on_right <= (others => transmit_on);
+	
+	transmit_on_gen: process(ec_40MHz_2_p)
+		variable state : integer range 0 to 4 := 0;
+		variable cnt : integer := 0;
+	begin
+		if(rising_edge(ec_40MHz_2_p)) then
+			case state is
+				when 0 => if(gtu = '0') then
+										state := state + 1;
+									end if;
+				when 1 => if(gtu = '1') then
+										state := state + 1;
+									end if;
+				when 2 => if(cnt = 0) then
+										cnt := 0;
+										state := state + 1;
+									else
+										cnt := cnt + 1;	
+									end if;
+				when 3 => transmit_on <= is_transmit_on;
+									if(cnt = 6) then
+										cnt := 0;
+									state := state + 1;
+										else
+										cnt := cnt + 1;	
+									end if;
+				when 4 => transmit_on <= '0';
+									state := 0;
+			end case;
+		end if;
+	end process;
+
+
 
 end Behavioral;

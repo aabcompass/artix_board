@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="11143840000fs"></ZoomStartTime>
-      <ZoomEndTime time="16313840001fs"></ZoomEndTime>
-      <Cursor1Time time="13995000000fs"></Cursor1Time>
+      <ZoomStartTime time="40000000fs"></ZoomStartTime>
+      <ZoomEndTime time="52940000001fs"></ZoomEndTime>
+      <Cursor1Time time="16340000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="250"></NameColumnWidth>
-      <ValueColumnWidth column_width="166"></ValueColumnWidth>
+      <ValueColumnWidth column_width="154"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="51" />
+   <WVObjectSize size="61" />
    <wave_markers>
       <marker label="" time="46877599000" />
       <marker label="" time="15567500000" />
@@ -58,21 +58,25 @@
       <obj_property name="label">3072bits=64x6x8</obj_property>
       <obj_property name="DisplayName">label</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left">
-      <obj_property name="ElementShortName">readout_dataout_left[3455:0]</obj_property>
-      <obj_property name="ObjectShortName">readout_dataout_left[3455:0]</obj_property>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/clk_40MHZ_p_i">
+      <obj_property name="ElementShortName">clk_40MHZ_p_i</obj_property>
+      <obj_property name="ObjectShortName">clk_40MHZ_p_i</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_right">
-      <obj_property name="ElementShortName">readout_dataout_right[3455:0]</obj_property>
-      <obj_property name="ObjectShortName">readout_dataout_right[3455:0]</obj_property>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/reset_readout">
+      <obj_property name="ElementShortName">reset_readout</obj_property>
+      <obj_property name="ObjectShortName">reset_readout</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/readout_clk_counter">
+      <obj_property name="ElementShortName">readout_clk_counter[9:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_clk_counter[9:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/clk_gtu_i">
+      <obj_property name="ElementShortName">clk_gtu_i</obj_property>
+      <obj_property name="ObjectShortName">clk_gtu_i</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left_dv">
       <obj_property name="ElementShortName">readout_dataout_left_dv[5:0]</obj_property>
       <obj_property name="ObjectShortName">readout_dataout_left_dv[5:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="divider30" type="divider">
-      <obj_property name="label">8bits bus</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
    </wvobject>
    <wvobject fp_name="divider39" type="divider">
       <obj_property name="label">hf domain</obj_property>
@@ -194,6 +198,10 @@
       <obj_property name="ElementShortName">ec_clk_gtu_2_p</obj_property>
       <obj_property name="ObjectShortName">ec_clk_gtu_2_p</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(2)\/inst_pmt_readout_left/transmit_on">
+      <obj_property name="ElementShortName">transmit_on</obj_property>
+      <obj_property name="ObjectShortName">transmit_on</obj_property>
+   </wvobject>
    <wvobject fp_name="divider145" type="divider">
       <obj_property name="label">redout</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -229,5 +237,37 @@
    <wvobject type="logic" fp_name="/top_artix_tb/dut/axis_clkconv_left/m_axis_tvalid">
       <obj_property name="ElementShortName">m_axis_tvalid</obj_property>
       <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider52" type="divider">
+      <obj_property name="label">transmit_on</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(1)\/inst_pmt_readout_left/clk_sp">
+      <obj_property name="ElementShortName">clk_sp</obj_property>
+      <obj_property name="ObjectShortName">clk_sp</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(2)\/inst_pmt_readout_left/clk_gtu_i">
+      <obj_property name="ElementShortName">clk_gtu_i</obj_property>
+      <obj_property name="ObjectShortName">clk_gtu_i</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(2)\/inst_pmt_readout_left/transmit_on">
+      <obj_property name="ElementShortName">transmit_on</obj_property>
+      <obj_property name="ObjectShortName">transmit_on</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/acq_on">
+      <obj_property name="ElementShortName">acq_on</obj_property>
+      <obj_property name="ObjectShortName">acq_on</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/readout_process_state">
+      <obj_property name="ElementShortName">readout_process_state[3:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_process_state[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/readout_channels_gray_dv">
+      <obj_property name="ElementShortName">readout_channels_gray_dv</obj_property>
+      <obj_property name="ObjectShortName">readout_channels_gray_dv</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/dataout_dv">
+      <obj_property name="ElementShortName">dataout_dv</obj_property>
+      <obj_property name="ObjectShortName">dataout_dv</obj_property>
    </wvobject>
 </wave_config>

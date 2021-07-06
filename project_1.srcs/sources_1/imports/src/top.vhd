@@ -16,6 +16,7 @@ entity pmt_readout_top is
 		transmit_on : in  STD_LOGIC; 
 		reset: in std_logic;		
 		gen_mode: in std_logic;
+		acq_on: in std_logic;
 		-- ext io
 		x_data_pc: in std_logic_vector(7 downto 0); -- ext. pins
 		x_data_ki: in std_logic;
@@ -47,7 +48,6 @@ end; -- function reverse_any_vector
 	attribute keep_hierarchy : string;
 	attribute keep_hierarchy of Behavioral : architecture is "yes";
 
-	
 	component clk_80MHz
 	port
 	 (-- Clock in ports
@@ -123,6 +123,8 @@ end; -- function reverse_any_vector
     
     attribute keep : string;
     attribute keep of x_data_pc_d1 : signal is "true";
+    attribute keep of readout_bit_counter : signal is "true";
+    attribute keep of readout_process_state : signal is "true";
 
 
 begin
@@ -142,10 +144,10 @@ begin
 	
 	-- readout_process_v2
 	readout_process_v2: process(clk)
-		variable state : integer range 0 to 6 := 0;
+		variable state : integer range 0 to 7 := 0;
 	begin
 		if(rising_edge(clk)) then
-			if(reset = '1') then
+			if(reset = '1' or acq_on = '0') then
 				state := 0;
 				delay_counter <= "0000";
 				readout_bit_counter <= "000000";
@@ -159,9 +161,15 @@ begin
 					-- waiting for a transmission
 					when 1 => if(clk_gtu_i = '1') then
 											state := state + 1;
+											readout_bit_counter <= "000000";
 										end if;
 					when 2 => if(transmit_on = '1') then
 											state := state + 1;
+										elsif(readout_bit_counter = "111111") then --No transmit_on, i.e. no asic in most case (or it doesn't work)
+											delay_counter <= "0000";
+											state := 7;
+										else
+											readout_bit_counter <= readout_bit_counter + 1;
 										end if;
 					when 3 => if(delay_counter = transmit_delay) then
 											state := state + 1;
@@ -188,7 +196,14 @@ begin
 											state := state + 1;
 											readout_bit_counter <= readout_bit_counter + 1;
 										end if;
-					when 6 => state := state -2;
+					when 6 => state := state - 2;
+					when 7 => if(delay_counter = "1000") then
+											state := 0;
+											readout_channels_gray_dv <= '0';
+										else
+											readout_channels_gray_dv <= '1';
+											delay_counter <= delay_counter + 1;
+										end if;
 				end case;				
 			end if;
 		end if;

@@ -20,7 +20,8 @@ use xpm.vcomponents.all;
 --
 
 entity top_artix is
-    generic(CLK_RATIO : integer := 70);
+    generic(CLK_RATIO : integer := 70; 
+    IS_SIM: std_logic:= '0');
     Port 
     ( 
       --! system
@@ -107,6 +108,7 @@ end component;
 	 end component;
 
 	COMPONENT slow_ctrl is
+			generic (SREG_DEF: std_logic_vector(31 downto 0) := (others => '0'));
 			Port ( clk : in STD_LOGIC;
 							sr_ck: in STD_LOGIC;
 						 sr_in : in STD_LOGIC;
@@ -144,6 +146,7 @@ end component;
   		transmit_on : in  STD_LOGIC; 
   		reset: in std_logic;	
   		gen_mode: in std_logic;	
+  		acq_on: in std_logic;	
   		-- ext io
   		x_data_pc: in std_logic_vector(7 downto 0); -- ext. pins
   		x_data_ki: in std_logic; -- ext. pins
@@ -255,13 +258,18 @@ end component;
 	signal gen_mode, vio_influence: std_logic_vector(0 downto 0) := "0";
 	signal is_testmode2, is_testmode2_sync: std_logic:= '0';
 	signal frame_on, frame_on_sync: std_logic:= '0';
+	signal acq_on: std_logic:= '0';
+	signal acq_on_sync: std_logic:= '0';
 	
    attribute keep : string;
 	attribute keep of ec_transmit_on_left_d1 : signal is "true";
 	attribute keep of ec_transmit_on_right_d1 : signal is "true";
 	attribute keep of clk_gtu_i : signal is "true";
-	
-	
+	attribute keep of clk_40MHZ_p_i : signal is "true";
+	attribute keep of m_axis_tdata_left_hf : signal is "true";
+	attribute keep of m_axis_tvalid_left_hf : signal is "true";
+	attribute keep of m_axis_tdata_left_hf_2 : signal is "true";
+	attribute keep of m_axis_tvalid_hf_2 : signal is "true";	
 begin
 
 
@@ -328,6 +336,7 @@ begin
 	end process;
 
 	i_sc: slow_ctrl 
+			generic map(SREG_DEF => (11 => IS_SIM, others => '0'))
 			Port map( clk => clk_200MHz,--: in STD_LOGIC;
 							sr_ck => sr_ck,--: in STD_LOGIC;
 						 sr_in => sr_in,--: in STD_LOGIC;
@@ -339,6 +348,7 @@ begin
 
 	is_testmode2 <= sreg_input_reg(8);
 	frame_on <= sreg_input_reg(10); 
+	acq_on <= sreg_input_reg(11); 
 	
 	 xpm_cdc_gen_mode0 : xpm_cdc_single
 	 generic map (
@@ -430,6 +440,23 @@ begin
 	    src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
 	    src_in => is_testmode2      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
 	 );	
+
+  xpm_cdc_acq_on : xpm_cdc_single
+	 generic map (
+	    DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+	    INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+	                         -- values
+	    SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+	    SRC_INPUT_REG => 0   -- DECIMAL; integer; 0=do not register input, 1=register input
+	 )
+	 port map (
+	    dest_out => acq_on_sync, -- 1-bit output: src_in synchronized to the destination clock domain. This output
+	    dest_clk => clk_ec, -- 1-bit input: Clock signal for the destination clock domain.
+	    src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+	    src_in => acq_on      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
+	 );	
+
+
 
 --  readout_clk_former_process: process(clk_ec)	
 --		variable state : integer range 0 to 1 := 0;
@@ -581,7 +608,8 @@ begin
 				clk_gtu => clk_gtu_i,-- : in  STD_LOGIC; -- 400 kHz clock (really not clock, but signal)
 				transmit_on => ec_transmit_on_left(i),
 				reset => reset_readout,--: in std_logic;	
-				gen_mode => gen_mode(0),	
+				gen_mode => gen_mode(0),
+				acq_on => acq_on_sync,	
 				-- ext io
 				x_data_pc => ec_data_left(7+8*i downto 0+8*i),--: in std_logic_vector(7 downto 0); -- ext. pins
 				x_data_ki => ec_data_ki_left(i),--: in std_logic_vector(7 downto 0); -- ext. pins
@@ -603,6 +631,7 @@ begin
 				transmit_on => ec_transmit_on_right(i),
 				reset => reset_readout,--: in std_logic;
 				gen_mode => gen_mode(0),		
+				acq_on => acq_on_sync,		
 				-- ext io
 				x_data_pc => ec_data_right(7+8*i downto 0+8*i),--: in std_logic_vector(7 downto 0); -- ext. pins
 				x_data_ki => ec_data_ki_right(i),--: in std_logic_vector(7 downto 0); -- ext. pins
