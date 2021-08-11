@@ -760,7 +760,7 @@ begin
    );
 
 	frame_on_process: process(clk_hf)
-		variable state : integer range 0 to 3 := 0;
+		variable state : integer range 0 to 2 := 0;
 	begin
 		if(rising_edge(clk_hf)) then
 			case state is
@@ -772,13 +772,13 @@ begin
 										state := state + 1;
 									end if;
 				when 2 => m_axis_tvalid_hf_2 <= m_axis_tvalid_hf;
-									if(frame_on_sync = '0') then
-										state := state + 1;
-									end if;
-				when 3 => m_axis_tvalid_hf_2 <= m_axis_tvalid_hf;
-									if(m_axis_tvalid_left_hf(0) = '0') then
-										state := 0;
-									end if;
+--									if(frame_on_sync = '0') then
+--										state := state + 1;
+--									end if;
+--				when 3 => m_axis_tvalid_hf_2 <= m_axis_tvalid_hf;
+--									if(m_axis_tvalid_left_hf(0) = '0') then
+--										state := 0;
+--									end if;
 			end case;
 		end if; 
 	end process;

@@ -144,10 +144,10 @@ begin
 	
 	-- readout_process_v2
 	readout_process_v2: process(clk)
-		variable state : integer range 0 to 7 := 0;
+		variable state : integer range 0 to 8 := 0;
 	begin
 		if(rising_edge(clk)) then
-			if(reset = '1' or acq_on = '0') then
+			if(reset = '1') then
 				state := 0;
 				delay_counter <= "0000";
 				readout_bit_counter <= "000000";
@@ -155,23 +155,26 @@ begin
 			else 
 				readout_process_state <= conv_std_logic_vector(state, 4);
 				case state is
-					when 0 => if(clk_gtu_i = '0') then
+					when 0 => if(acq_on = '1') then
+												state := state + 1;
+										end if;
+					when 1 => if(clk_gtu_i = '0') then
 											state := state + 1;
 										end if;
 					-- waiting for a transmission
-					when 1 => if(clk_gtu_i = '1') then
+					when 2 => if(clk_gtu_i = '1') then
 											state := state + 1;
 											readout_bit_counter <= "000000";
 										end if;
-					when 2 => if(transmit_on = '1') then
+					when 3 => if(transmit_on = '1') then
 											state := state + 1;
 										elsif(readout_bit_counter = "111111") then --No transmit_on, i.e. no asic in most case (or it doesn't work)
 											delay_counter <= "0000";
-											state := 7;
+											state := 8;
 										else
 											readout_bit_counter <= readout_bit_counter + 1;
 										end if;
-					when 3 => if(delay_counter = transmit_delay) then
+					when 4 => if(delay_counter = transmit_delay) then
 											state := state + 1;
 											delay_counter <= "0000";
 										else
@@ -179,7 +182,7 @@ begin
 										end if;
 										readout_bit_counter <= "000000";
 					-- readout
-					when 4 => for i in 0 to 7 loop
+					when 5 => for i in 0 to 7 loop
 											readout_channels_gray(7+i*8 downto i*8) <= readout_channels_gray(6+i*8 downto i*8) & x_data_pc_binary(i);
 										end loop;
 										readout_channels_ki_gray(7 downto 0) <= readout_channels_ki_gray(6 downto 0) & x_data_ki_binary;
@@ -189,16 +192,16 @@ begin
 										else
 											readout_channels_gray_dv <= '0';
 										end if;
-					when 5 => readout_channels_gray_dv <= '0';
+					when 6 => readout_channels_gray_dv <= '0';
 										if(readout_bit_counter = "111111") then
-											state := 0;
+											state := 1;
 										else
 											state := state + 1;
 											readout_bit_counter <= readout_bit_counter + 1;
 										end if;
-					when 6 => state := state - 2;
-					when 7 => if(delay_counter = "1000") then
-											state := 0;
+					when 7 => state := state - 2;
+					when 8 => if(delay_counter = "1000") then
+											state := 1;
 											readout_channels_gray_dv <= '0';
 										else
 											readout_channels_gray_dv <= '1';
