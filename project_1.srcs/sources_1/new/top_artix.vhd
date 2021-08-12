@@ -27,6 +27,7 @@ entity top_artix is
       --! system
       clk_pri : in STD_LOGIC;--!< Primary clock from Zynq
       artix_addr: in std_logic_vector(1 downto 0);--!< 2bit address for distinguish which Artix (from 3)
+      gtu_zb: in std_logic;
       --! gen mode
      -- gen_mode: in std_logic;
        
@@ -38,6 +39,7 @@ entity top_artix is
       ec_40MHz_2_p, ec_40MHz_2_n: out std_logic;
       ec_40MHz_3_p, ec_40MHz_3_n: out std_logic;
       --ec_40MHz_tst_p, ec_40MHz_tst_n: out std_logic;
+      
       
       --! data to ZYNQ
       zynq_frame_p, zynq_frame_n: out std_logic; --!< Frame diff signal for data transfer from Artix to Zynq
@@ -60,7 +62,7 @@ entity top_artix is
       bitstream_out: out std_logic;
 			sr_ck: in STD_LOGIC;
 		  sr_in : in STD_LOGIC;
-		  sr_out : out STD_LOGIC;
+		  --sr_out : out STD_LOGIC;
 			latch : in STD_LOGIC
     );
 end top_artix;
@@ -261,6 +263,8 @@ end component;
 	signal acq_on: std_logic:= '0';
 	signal acq_on_sync: std_logic:= '0';
 	
+	signal gtu_zb_d1: std_logic:= '0';
+	
    attribute keep : string;
 	attribute keep of ec_transmit_on_left_d1 : signal is "true";
 	attribute keep of ec_transmit_on_right_d1 : signal is "true";
@@ -340,7 +344,7 @@ begin
 			Port map( clk => clk_200MHz,--: in STD_LOGIC;
 							sr_ck => sr_ck,--: in STD_LOGIC;
 						 sr_in => sr_in,--: in STD_LOGIC;
-						 sr_out => sr_out,--: out STD_LOGIC;
+						 sr_out => open,--sr_out,--: out STD_LOGIC;
 						 latch => latch,--: in STD_LOGIC;
 						 sreg_input_reg => sreg_input_reg,--: out std_logic_vector(31 downto 0);
 						 sreg_output_reg => sreg_output_reg);--: in std_logic_vector(31 downto 0));
@@ -509,8 +513,25 @@ begin
 	end process;
 	
 	
+	 xpm_cdc_gtu_zb : xpm_cdc_single
+	 generic map (
+			DEST_SYNC_FF => 4,   -- DECIMAL; range: 2-10
+			INIT_SYNC_FF => 0,   -- DECIMAL; integer; 0=disable simulation init values, 1=enable simulation init
+													 -- values
+			SIM_ASSERT_CHK => 0, -- DECIMAL; integer; 0=disable simulation messages, 1=enable simulation messages
+			SRC_INPUT_REG => 0   -- DECIMAL; integer; 0=do not register input, 1=register input
+	 )
+	 port map (
+			dest_out => gtu_zb_d1, -- 1-bit output: src_in synchronized to the destination clock domain. This output
+														-- is registered.
+
+			dest_clk => clk_ec, -- 1-bit input: Clock signal for the destination clock domain.
+			src_clk => '0',   -- 1-bit input: optional; required when SRC_INPUT_REG = 1
+			src_in => gtu_zb      -- 1-bit input: Input signal to be synchronized to dest_clk domain.
+	 );
+
 	clk_gtu_former : process(clk_ec)	
-		variable state : integer range 0 to 1 := 0;
+		variable state : integer range 0 to 2 := 0;
 	begin
 		if(rising_edge(clk_ec)) then
 			if(reset_readout = '1') then
@@ -520,6 +541,10 @@ begin
 				if(clk_40MHZ_p_i = '1') then
 					case state is
 						when 0 => 
+							if(gtu_zb_d1 = '1') then
+								state := state + 1;
+							end if;				
+						when 1 => 
 							if(readout_clk_counter = (2-1)) then
 								state := state + 1;
 								readout_clk_counter <= (others => '0');
@@ -527,9 +552,9 @@ begin
 								readout_clk_counter <= readout_clk_counter + 1;
 							end if;
 							clk_gtu_i <= '0';
-						when 1 => 
+						when 2 => 
 							if(readout_clk_counter = ((CLK_RATIO-2)-1)) then
-								state := 0;
+								state := state - 1;
 								readout_clk_counter <= (others => '0');
 							else
 								readout_clk_counter <= readout_clk_counter + 1;
