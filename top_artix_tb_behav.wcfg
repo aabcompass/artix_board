@@ -12,19 +12,21 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="40000000fs"></ZoomStartTime>
-      <ZoomEndTime time="52940000001fs"></ZoomEndTime>
-      <Cursor1Time time="16340000000fs"></Cursor1Time>
+      <ZoomStartTime time="10724910000fs"></ZoomStartTime>
+      <ZoomEndTime time="20584910001fs"></ZoomEndTime>
+      <Cursor1Time time="18744910000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="250"></NameColumnWidth>
-      <ValueColumnWidth column_width="154"></ValueColumnWidth>
+      <NameColumnWidth column_width="290"></NameColumnWidth>
+      <ValueColumnWidth column_width="150"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="61" />
+   <WVObjectSize size="72" />
    <wave_markers>
       <marker label="" time="46877599000" />
       <marker label="" time="15567500000" />
       <marker label="" time="15570000000" />
+      <marker label="" time="17745000000" />
+      <marker label="" time="17875000000" />
    </wave_markers>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/clk_pri">
       <obj_property name="ElementShortName">clk_pri</obj_property>
@@ -66,13 +68,13 @@
       <obj_property name="ElementShortName">reset_readout</obj_property>
       <obj_property name="ObjectShortName">reset_readout</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top_artix_tb/dut/readout_clk_counter">
-      <obj_property name="ElementShortName">readout_clk_counter[9:0]</obj_property>
-      <obj_property name="ObjectShortName">readout_clk_counter[9:0]</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/clk_gtu_i">
       <obj_property name="ElementShortName">clk_gtu_i</obj_property>
       <obj_property name="ObjectShortName">clk_gtu_i</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/gtu_zb">
+      <obj_property name="ElementShortName">gtu_zb</obj_property>
+      <obj_property name="ObjectShortName">gtu_zb</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/readout_dataout_left_dv">
       <obj_property name="ElementShortName">readout_dataout_left_dv[5:0]</obj_property>
@@ -199,8 +201,16 @@
       <obj_property name="ObjectShortName">ec_clk_gtu_2_p</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(2)\/inst_pmt_readout_left/transmit_on">
+      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">transmit_on</obj_property>
       <obj_property name="ObjectShortName">transmit_on</obj_property>
+      <obj_property name="label">transmit_on_left</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_transmit_on_right[0]">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">[0]</obj_property>
+      <obj_property name="ObjectShortName">[0]</obj_property>
+      <obj_property name="label">transmit_on_right</obj_property>
    </wvobject>
    <wvobject fp_name="divider145" type="divider">
       <obj_property name="label">redout</obj_property>
@@ -215,7 +225,7 @@
       <obj_property name="ObjectShortName">dataout_dv</obj_property>
    </wvobject>
    <wvobject fp_name="divider65" type="divider">
-      <obj_property name="label">DWC</obj_property>
+      <obj_property name="label">DWC-left</obj_property>
       <obj_property name="DisplayName">label</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/dw_conv_left/m_axis_tvalid">
@@ -223,6 +233,18 @@
       <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/dw_conv_left/m_axis_tdata">
+      <obj_property name="ElementShortName">m_axis_tdata[7:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tdata[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider65" type="divider">
+      <obj_property name="label">DWC-right</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/dw_conv_right/m_axis_tvalid">
+      <obj_property name="ElementShortName">m_axis_tvalid</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/dw_conv_right/m_axis_tdata">
       <obj_property name="ElementShortName">m_axis_tdata[7:0]</obj_property>
       <obj_property name="ObjectShortName">m_axis_tdata[7:0]</obj_property>
    </wvobject>
@@ -258,16 +280,64 @@
       <obj_property name="ElementShortName">acq_on</obj_property>
       <obj_property name="ObjectShortName">acq_on</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(2)\/inst_pmt_readout_left/transmit_on">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">transmit_on</obj_property>
+      <obj_property name="ObjectShortName">transmit_on</obj_property>
+      <obj_property name="label">transmit_on_left</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/ec_transmit_on_right[0]">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">[0]</obj_property>
+      <obj_property name="ObjectShortName">[0]</obj_property>
+      <obj_property name="label">transmit_on_right</obj_property>
+   </wvobject>
    <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/readout_process_state">
+      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">readout_process_state[3:0]</obj_property>
       <obj_property name="ObjectShortName">readout_process_state[3:0]</obj_property>
+      <obj_property name="label">readout_process_state_l[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(2)\/inst_pmt_readout_right/readout_process_state">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">readout_process_state[3:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_process_state[3:0]</obj_property>
+      <obj_property name="label">readout_process_state_r[3:0]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/readout_channels_gray_dv">
+      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">readout_channels_gray_dv</obj_property>
       <obj_property name="ObjectShortName">readout_channels_gray_dv</obj_property>
+      <obj_property name="label">readout_channels_gray_dv_l</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(1)\/inst_pmt_readout_right/readout_channels_gray_dv">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">readout_channels_gray_dv</obj_property>
+      <obj_property name="ObjectShortName">readout_channels_gray_dv</obj_property>
+      <obj_property name="label">readout_channels_gray_dv_r</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/dataout_dv">
+      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">dataout_dv</obj_property>
       <obj_property name="ObjectShortName">dataout_dv</obj_property>
+      <obj_property name="label">dataout_dv_l</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(1)\/inst_pmt_readout_right/dataout_dv">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">dataout_dv</obj_property>
+      <obj_property name="ObjectShortName">dataout_dv</obj_property>
+      <obj_property name="label">dataout_dv_r</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_left/readout_bit_counter">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">readout_bit_counter[5:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_bit_counter[5:0]</obj_property>
+      <obj_property name="label">readout_bit_counter_l[5:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_artix_tb/dut/\gen_inst_pmt_readout(0)\/inst_pmt_readout_right/readout_bit_counter">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">readout_bit_counter[5:0]</obj_property>
+      <obj_property name="ObjectShortName">readout_bit_counter[5:0]</obj_property>
+      <obj_property name="label">readout_bit_counter_r[5:0]</obj_property>
    </wvobject>
 </wave_config>

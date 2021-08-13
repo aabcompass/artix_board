@@ -116,6 +116,7 @@ end; -- function reverse_any_vector
     signal readout_channels_gray_dv, readout_channels_gray_dv_d1 : std_logic := '0';
     signal fifo_datain_dv : std_logic := '0';
     signal readout_bit_counter : STD_LOGIC_VECTOR(5 downto 0) := (others => '0');
+    signal readout_bit_counter2 : STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
     signal delay_counter : STD_LOGIC_VECTOR(3 downto 0) := (others => '0');
     
     signal dataout_unmapped : std_logic_vector(511 downto 0)  := (others => '0');
@@ -124,6 +125,7 @@ end; -- function reverse_any_vector
     attribute keep : string;
     attribute keep of x_data_pc_d1 : signal is "true";
     attribute keep of readout_bit_counter : signal is "true";
+    attribute keep of readout_bit_counter2: signal is "true";
     attribute keep of readout_process_state : signal is "true";
 
 
@@ -151,6 +153,7 @@ begin
 				state := 0;
 				delay_counter <= "0000";
 				readout_bit_counter <= "000000";
+				readout_bit_counter2 <= "00000000";
 				readout_channels_gray_dv <= '0';
 			else 
 				readout_process_state <= conv_std_logic_vector(state, 4);
@@ -165,14 +168,15 @@ begin
 					when 2 => if(clk_gtu_i = '1') then
 											state := state + 1;
 											readout_bit_counter <= "000000";
+											readout_bit_counter2 <= "00000000";
 										end if;
 					when 3 => if(transmit_on = '1') then
 											state := state + 1;
-										elsif(readout_bit_counter = "111111") then --No transmit_on, i.e. no asic in most case (or it doesn't work)
+										elsif(readout_bit_counter2 = "10111111") then --No transmit_on, i.e. no asic in most case (or it doesn't work)
 											delay_counter <= "0000";
 											state := 8;
 										else
-											readout_bit_counter <= readout_bit_counter + 1;
+											readout_bit_counter2 <= readout_bit_counter2 + 1;
 										end if;
 					when 4 => if(delay_counter = transmit_delay) then
 											state := state + 1;

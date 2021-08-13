@@ -16,6 +16,7 @@ architecture Behavioral of top_artix_tb is
      --! system
 			 clk_pri : in STD_LOGIC;--!< Primary clock from Zynq
 			 artix_addr: in std_logic_vector(1 downto 0);--!< 2bit address for distinguish which Artix (from 3)
+     	 gtu_zb: in std_logic;
 			 --! gen mode
 			-- gen_mode: in std_logic;
 			  
@@ -49,7 +50,7 @@ architecture Behavioral of top_artix_tb is
 			 bitstream_out: out std_logic;
 			sr_ck: in STD_LOGIC := '0';
 		  sr_in : in STD_LOGIC := '0';
-		  sr_out : out STD_LOGIC;
+		  --sr_out : out STD_LOGIC;
 			latch : in STD_LOGIC := '0'
 
 
@@ -57,6 +58,7 @@ architecture Behavioral of top_artix_tb is
 	end component;
 
 	signal clk_pri: std_logic := '0';
+	signal gtu_zb: std_logic := '0';
 	signal ec_40MHz_2_p: std_logic := '0';
 	signal gtu: std_logic := '0';
 	signal transmit_on: std_logic := '0';
@@ -78,6 +80,9 @@ begin
 	begin
 		if(rising_edge(ec_40MHz_2_p)) then
 			ec_data_left <= ec_data_left + 1;
+			if(ec_data_left = X"0000000002FF") then
+				gtu_zb <= '1';
+			end if;
 		end if;
 	end process;
 	
@@ -87,6 +92,7 @@ begin
 	port map
 	(
 		clk_pri => clk_pri,
+		gtu_zb => gtu_zb,
 		--gen_mode => '0',
 		artix_addr => "10",
 		ec_40MHz_2_p => ec_40MHz_2_p,
@@ -99,8 +105,8 @@ begin
 		ec_clk_gtu_2_p => gtu
 	);
 	
-	ec_transmit_on_left <= (others => transmit_on);
-	ec_transmit_on_right <= (others => transmit_on);
+	ec_transmit_on_left <= (others => '0');
+	ec_transmit_on_right <= (others => transmit_on);--transmit_on);
 	
 	transmit_on_gen: process(ec_40MHz_2_p)
 		variable state : integer range 0 to 4 := 0;
