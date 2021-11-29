@@ -324,7 +324,9 @@ begin
 			dataout(dst*8 + 7 downto dst*8) <= dataout_unmapped(src*8 + 7 downto src*8);
 		end generate;
 	end generate;
-	--dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
+	
+	dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
+	
 --	dataout(512+64-1 downto 512) <= 
 --		  "00" & dataout_ki_unmapped(5+6*7 downto 0+6*7)
 --		& "00" & dataout_ki_unmapped(5+6*6 downto 0+6*6)
@@ -335,15 +337,15 @@ begin
 --		& "00" & dataout_ki_unmapped(5+6*1 downto 0+6*1) 
 --		& "00" & dataout_ki_unmapped(5+6*0 downto 0+6*0);
 
-	dataout(512+64-1 downto 512) <= 
-		  "00" & reverse_any_vector(dataout_ki_unmapped(5+6*7+16 downto 0+6*7+16))
-		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*6+16 downto 0+6*6+16))
-		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*5+16 downto 0+6*5+16))
-		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*4+16 downto 0+6*4+16)) 
-		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*3+16 downto 0+6*3+16)) 
-		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*2+16 downto 0+6*2+16))
-		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*1+16 downto 0+6*1+16)) 
-		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*0+16 downto 0+6*0+16));
+--	dataout(512+64-1 downto 512) <= 
+--		  "00" & reverse_any_vector(dataout_ki_unmapped(5+6*7+16 downto 0+6*7+16))
+--		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*6+16 downto 0+6*6+16))
+--		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*5+16 downto 0+6*5+16))
+--		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*4+16 downto 0+6*4+16)) 
+--		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*3+16 downto 0+6*3+16)) 
+--		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*2+16 downto 0+6*2+16))
+--		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*1+16 downto 0+6*1+16)) 
+--		& "00" & reverse_any_vector(dataout_ki_unmapped(5+6*0+16 downto 0+6*0+16));
 
 
 end Behavioral;

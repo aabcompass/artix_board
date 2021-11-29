@@ -733,8 +733,10 @@ begin
 				when others => artix_addr_mode := "00";			
 			end case;
 			if(is_testmode2_sync = '1') then
-				m_axis_tdata_left_hf_2(7+8*i downto 8*i) <= "00" & artix_addr_mode & '0' & conv_std_logic_vector(i, 3);
-				m_axis_tdata_right_hf_2(7+8*i downto 8*i) <= "00" & artix_addr_mode & '1' & conv_std_logic_vector(i, 3);
+				--m_axis_tdata_left_hf_2(7+8*i downto 8*i) <= "00" & artix_addr_mode & '0' & conv_std_logic_vector(i, 3);
+					m_axis_tdata_left_hf_2(7+8*i downto 8*i) <= "00110" * (artix_addr_mode & '0') + conv_std_logic_vector(i, 3);
+				--m_axis_tdata_right_hf_2(7+8*i downto 8*i) <= "00" & artix_addr_mode & '1' & conv_std_logic_vector((5-i), 3);
+					m_axis_tdata_right_hf_2(7+8*i downto 8*i) <= "00110" * (artix_addr_mode & '1') + conv_std_logic_vector(5-i, 3);
 			else
 				m_axis_tdata_left_hf_2(7+8*i downto 8*i) <= m_axis_tdata_left_hf(7+8*i downto 8*i);
 				m_axis_tdata_right_hf_2(7+8*i downto 8*i) <= m_axis_tdata_right_hf(7+8*i downto 8*i);
