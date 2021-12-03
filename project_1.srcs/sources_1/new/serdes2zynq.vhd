@@ -36,6 +36,7 @@ use UNISIM.vcomponents.all;
 --use UNISIM.VComponents.all;
 
 entity serdes2zynq is
+    Generic (IS_DIFF: std_logic := '1');
     Port ( clk : in STD_LOGIC;
            clkdiv : in STD_LOGIC;
            reset_serdes: in std_logic;
@@ -49,15 +50,10 @@ architecture Behavioral of serdes2zynq is
 	attribute keep_hierarchy : string;
 	attribute keep_hierarchy of Behavioral : architecture is "yes";
 
-
 	signal OQ: std_logic;
 	signal OQ_delayed: std_logic;
 
-
-
 begin
-
-
 
 -- <-----Cut code below this line and paste into the architecture body---->
 
@@ -112,7 +108,7 @@ begin
       TCE => '0'              -- 1-bit input: 3-state clock enable
    );
 
-
+	IS_DIFF_GEN0: if(IS_DIFF='1') generate
 		 OBUFDS_inst : OBUFDS
 			generic map (
 							IOSTANDARD => "DEFAULT", -- Specify the output I/O standard
@@ -121,8 +117,11 @@ begin
 							O => dataout_p,     -- Diff_p output (connect directly to top-level port)
 							OB => dataout_n,   -- Diff_n output (connect directly to top-level port)
 							I => OQ   -- Buffer input 
-			);
+			);		
+	end generate IS_DIFF_GEN0;
 
-
+	IS_DIFF_GEN1: if(IS_DIFF='0') generate
+		dataout_p <= OQ;
+	end generate IS_DIFF_GEN1;
 
 end Behavioral;

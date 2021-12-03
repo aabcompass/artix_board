@@ -45,6 +45,7 @@ entity top_artix is
       zynq_frame_p, zynq_frame_n: out std_logic; --!< Frame diff signal for data transfer from Artix to Zynq
       zynq_data_p, zynq_data_n: out std_logic_vector(11 downto 0); --!< Data diff signals for data transfer from Artix to Zynq
       zynq_clk_p, zynq_clk_n: out std_logic; --!< Clock diff signal for data transfer from Artix to Zynq
+      channel_12: out std_logic;
       
       --! from SPACIROCs
       ec_data_left: in std_logic_vector(47 downto 0); --!< Data signals from ASICs A(7:0) & B(7:0) & ... & F(7:0)
@@ -192,6 +193,7 @@ end component;
 	END COMPONENT;	
 	
 	COMPONENT serdes2zynq is
+			Generic (IS_DIFF: std_logic := '1');
 	    Port ( clk : in STD_LOGIC;
 	           clkdiv : in STD_LOGIC;
 	           reset_serdes: in std_logic;
@@ -818,6 +820,16 @@ begin
 			datain => m_axis_tvalid_hf_2,--: in STD_LOGIC_VECTOR (7 downto 0);
 			dataout_p => zynq_frame_p,--: out STD_LOGIC;
 			dataout_n => zynq_frame_n); --: out STD_LOGIC);
+			
+	serdes_frame_ch12: serdes2zynq 
+				generic map (IS_DIFF => '0')
+				Port map( 
+					clk => clk_serdes,--: in STD_LOGIC;
+					clkdiv => clk_hf,--: in STD_LOGIC;
+					reset_serdes => rst_hf,
+					datain => m_axis_tvalid_hf_2,--: in STD_LOGIC_VECTOR (7 downto 0);
+					dataout_p => channel_12,--: out STD_LOGIC;
+					dataout_n => open); --: out STD_LOGIC);			
 
 	idelay_REFCLK_200MHZ <= clk_ec;
 	idelay_rst_200MHZ <= reset_readout;

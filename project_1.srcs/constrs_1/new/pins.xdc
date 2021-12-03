@@ -343,3 +343,6 @@ set_property SLEW FAST [get_ports ec_40MHz_2_n]
 set_property PACKAGE_PIN C11 [get_ports gtu_zb]
 set_property IOSTANDARD LVCMOS33 [get_ports gtu_zb]
 
+
+set_property IOSTANDARD LVCMOS25 [get_ports channel_12]
+set_property PACKAGE_PIN T15 [get_ports channel_12]

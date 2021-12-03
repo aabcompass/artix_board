@@ -117,6 +117,7 @@ end; -- function reverse_any_vector
     signal fifo_datain_dv : std_logic := '0';
     signal readout_bit_counter : STD_LOGIC_VECTOR(5 downto 0) := (others => '0');
     signal readout_bit_counter2 : STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
+    signal tmp_vec : STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
     signal delay_counter : STD_LOGIC_VECTOR(3 downto 0) := (others => '0');
     
     signal dataout_unmapped : std_logic_vector(511 downto 0)  := (others => '0');
@@ -127,6 +128,8 @@ end; -- function reverse_any_vector
     attribute keep of readout_bit_counter : signal is "true";
     attribute keep of readout_bit_counter2: signal is "true";
     attribute keep of readout_process_state : signal is "true";
+    attribute keep of readout_channels_ki_gray : signal is "true";
+    attribute keep of dataout_ki_unmapped : signal is "true";
 
 
 begin
@@ -189,7 +192,7 @@ begin
 					when 5 => for i in 0 to 7 loop
 											readout_channels_gray(7+i*8 downto i*8) <= readout_channels_gray(6+i*8 downto i*8) & x_data_pc_binary(i);
 										end loop;
-										readout_channels_ki_gray(7 downto 0) <= readout_channels_ki_gray(6 downto 0) & x_data_ki_binary;
+										readout_channels_ki_gray <= readout_channels_ki_gray(6 downto 0) & x_data_ki_binary;
 										state := state + 1;
 										if(readout_bit_counter(2 downto 0) = "111") then
 											readout_channels_gray_dv <= '1';
@@ -220,7 +223,10 @@ begin
 	inst_gray2bin_gen: for i in 0 to 7 generate
 		inst_gray2bin: gray2bin port map(clk, readout_channels_gray(7+8*i downto 8*i), '1', fifo_datain(7+8*i downto 8*i), open);
 	end generate inst_gray2bin_gen;
-	inst_gray2bin_ki: gray2bin port map(clk, readout_channels_ki_gray(7 downto 0), '1', fifo_ki_datain(7 downto 0), open);
+	--inst_gray2bin_ki: gray2bin port map(clk, readout_channels_ki_gray(7 downto 0), '1', fifo_ki_datain(7 downto 0), open);
+	
+	tmp_vec <=  readout_channels_ki_gray when rising_edge(clk);
+	fifo_ki_datain <= tmp_vec when rising_edge(clk);
 	
 	readout_channels_gray_dv_d1 <= readout_channels_gray_dv when rising_edge(clk);
 	fifo_datain_dv <= readout_channels_gray_dv_d1 when rising_edge(clk);
