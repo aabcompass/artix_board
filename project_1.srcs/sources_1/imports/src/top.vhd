@@ -331,17 +331,17 @@ begin
 		end generate;
 	end generate;
 	
-	dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
+--	dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
 	
---	dataout(512+64-1 downto 512) <= 
---		  "00" & dataout_ki_unmapped(5+6*7 downto 0+6*7)
---		& "00" & dataout_ki_unmapped(5+6*6 downto 0+6*6)
---		& "00" & dataout_ki_unmapped(5+6*5 downto 0+6*5)
---		& "00" & dataout_ki_unmapped(5+6*4 downto 0+6*4) 
---		& "00" & dataout_ki_unmapped(5+6*3 downto 0+6*3) 
---		& "00" & dataout_ki_unmapped(5+6*2 downto 0+6*2)
---		& "00" & dataout_ki_unmapped(5+6*1 downto 0+6*1) 
---		& "00" & dataout_ki_unmapped(5+6*0 downto 0+6*0);
+	dataout(512+64-1 downto 512) <= 
+		  "000000" & dataout_ki_unmapped(63 downto 62)
+		& "00" & dataout_ki_unmapped(61 downto 56)
+		& "00" & dataout_ki_unmapped(55 downto 50)
+		& "00" & dataout_ki_unmapped(49 downto 44) 
+		& "00" & dataout_ki_unmapped(43 downto 38) 
+		& "00" & dataout_ki_unmapped(37 downto 32)
+		& "00" & dataout_ki_unmapped(31 downto 26) 
+		& "00" & dataout_ki_unmapped(25 downto 20);
 
 --	dataout(512+64-1 downto 512) <= 
 --		  "00" & reverse_any_vector(dataout_ki_unmapped(5+6*7+16 downto 0+6*7+16))
