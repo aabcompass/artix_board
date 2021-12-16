@@ -159,7 +159,9 @@ end component;
   		-- states
   		readout_process_state, readout_dutycounter_process_state : out std_logic_vector(3 downto 0);
   		-- config module
-  		transmit_delay: in std_logic_vector(3 downto 0)
+  		transmit_delay: in std_logic_vector(3 downto 0);
+			idelay_C, idelay_LD: in std_logic;
+  		idelay_CNTVALUEIN: in std_logic_vector(4 downto 0)  		
   	);
   end COMPONENT;
 
@@ -276,8 +278,14 @@ end component;
 	attribute keep of m_axis_tvalid_left_hf : signal is "true";
 	attribute keep of m_axis_tdata_left_hf_2 : signal is "true";
 	attribute keep of m_axis_tvalid_hf_2 : signal is "true";	
+	
+	signal idelay_CNTVALUEIN: std_logic_vector(4 downto 0) := (others => '0');
+	signal idelay_LD: std_logic_vector(11 downto 0) := (others => '0');
+	
+	attribute IODELAY_GROUP : STRING;
+	attribute IODELAY_GROUP of IDELAYCTRL_inst: label is "IODELAY_GROUP";
+	
 begin
-
 
 	bitstream_out <= bitstream_in;
 
@@ -341,6 +349,14 @@ begin
 		end if;
 	end process;
 
+   IDELAYCTRL_inst : IDELAYCTRL
+   port map (
+      RDY => open,       -- 1-bit output: Ready output
+      REFCLK => clk_ec, -- 1-bit input: Reference clock input
+      RST => reset_readout        -- 1-bit input: Active high reset input
+   );
+
+
 	i_sc: slow_ctrl 
 			generic map(SREG_DEF => (11 => IS_SIM, others => '0'))
 			Port map( clk => clk_200MHz,--: in STD_LOGIC;
@@ -355,6 +371,9 @@ begin
 	is_testmode2 <= sreg_input_reg(8);
 	frame_on <= sreg_input_reg(10); 
 	acq_on <= sreg_input_reg(11); 
+	idelay_CNTVALUEIN <= sreg_input_reg(16 downto 12);
+	idelay_LD <= sreg_input_reg(28 downto 17);
+	
 	
 	 xpm_cdc_gen_mode0 : xpm_cdc_single
 	 generic map (
@@ -647,7 +666,11 @@ begin
 				readout_process_state => open,--, 
 				readout_dutycounter_process_state => open,--: out std_logic_vector(3 downto 0);
 				-- config module
-				transmit_delay => transmit_delay--conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
+				transmit_delay => transmit_delay,--conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
+				idelay_C => clk_200MHz, 
+				idelay_LD => idelay_LD(i),--: in std_logic;
+  			idelay_CNTVALUEIN => idelay_CNTVALUEIN-- in std_logic_vector(7 downto 0)  		
+
 			);
 		
 		inst_pmt_readout_right : pmt_readout_top
@@ -669,7 +692,11 @@ begin
 				readout_process_state => open,--, 
 				readout_dutycounter_process_state => open,--: out std_logic_vector(3 downto 0);
 				-- config module
-				transmit_delay => transmit_delay--conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
+				transmit_delay => transmit_delay,--conv_std_logic_vector(7, 4)--: in std_logic_vector(3 downto 0)
+				idelay_C => clk_200MHz, 
+				idelay_LD => idelay_LD(5-i+6),--: in std_logic;
+  			idelay_CNTVALUEIN => idelay_CNTVALUEIN-- in std_logic_vector(7 downto 0)  		
+				
 			);		
 
 		dw_conv_left : axis_dwidth_converter_0
@@ -831,8 +858,8 @@ begin
 					dataout_p => channel_12,--: out STD_LOGIC;
 					dataout_n => open); --: out STD_LOGIC);			
 
-	idelay_REFCLK_200MHZ <= clk_ec;
-	idelay_rst_200MHZ <= reset_readout;
+	--idelay_REFCLK_200MHZ <= clk_ec;
+	--idelay_rst_200MHZ <= reset_readout;
 	
 	serdes_frw_clk: serdes2zynq
 		Port map( 

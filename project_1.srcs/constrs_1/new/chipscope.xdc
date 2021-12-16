@@ -282,3 +282,12 @@
 #set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
 #set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
 #connect_debug_port dbg_hub/clk [get_nets clk_ec]
+
+set_property MARK_DEBUG true [get_nets {sreg_input_reg__0[23]}]
+set_property MARK_DEBUG true [get_nets {sreg_input_reg[16]}]
+set_property MARK_DEBUG true [get_nets {sreg_input_reg[15]}]
+set_property MARK_DEBUG true [get_nets {sreg_input_reg[14]}]
+set_property MARK_DEBUG true [get_nets {sreg_input_reg[13]}]
+set_property MARK_DEBUG true [get_nets {sreg_input_reg[12]}]
+set_property MARK_DEBUG true [get_nets {sreg_input_reg[28]}]
+
