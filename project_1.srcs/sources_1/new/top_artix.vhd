@@ -21,7 +21,8 @@ use xpm.vcomponents.all;
 
 entity top_artix is
     generic(CLK_RATIO : integer := 70; 
-    IS_SIM: std_logic:= '0');
+    IS_SIM: std_logic:= '0';
+    USE_IDELAY: std_logic := '0');
     Port 
     ( 
       --! system
@@ -142,6 +143,7 @@ end component;
 
 
 	COMPONENT pmt_readout_top
+  	generic (USE_IDELAY: std_logic := '0');
   	Port ( 
   		-- clks resets
   		clk_sp : in  STD_LOGIC; -- SPACIROC redout clock (80 MHz)
@@ -282,8 +284,9 @@ end component;
 	signal idelay_CNTVALUEIN: std_logic_vector(4 downto 0) := (others => '0');
 	signal idelay_LD: std_logic_vector(11 downto 0) := (others => '0');
 	
-	attribute IODELAY_GROUP : STRING;
-	attribute IODELAY_GROUP of IDELAYCTRL_inst: label is "IODELAY_GROUP";
+	-- if USE_IDELAY uncomment
+	--attribute IODELAY_GROUP : STRING;
+	--attribute IODELAY_GROUP of IDELAYCTRL_inst: label is "IODELAY_GROUP";
 	
 begin
 
@@ -349,12 +352,14 @@ begin
 		end if;
 	end process;
 
-   IDELAYCTRL_inst : IDELAYCTRL
-   port map (
-      RDY => open,       -- 1-bit output: Ready output
-      REFCLK => clk_ec, -- 1-bit input: Reference clock input
-      RST => reset_readout        -- 1-bit input: Active high reset input
-   );
+	USE_IDELAY_gen: if(USE_IDELAY = '1') generate
+    IDELAYCTRL_inst : IDELAYCTRL
+    port map (
+       RDY => open,       -- 1-bit output: Ready output
+       REFCLK => clk_ec, -- 1-bit input: Reference clock input
+       RST => reset_readout        -- 1-bit input: Active high reset input
+    );
+  end generate;
 
 
 	i_sc: slow_ctrl 
@@ -648,6 +653,7 @@ begin
   
 	gen_inst_pmt_readout: for i in 0 to 5 generate
 		inst_pmt_readout_left : pmt_readout_top
+			generic map (USE_IDELAY => USE_IDELAY)
 			Port map ( 
 				-- clks resets
 				clk_sp => clk_ec, --: in  STD_LOGIC; -- SPACIROC redout clock (80 MHz)

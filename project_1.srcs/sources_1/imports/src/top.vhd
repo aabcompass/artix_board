@@ -9,6 +9,7 @@ use UNISIM.VComponents.all;
 --
 
 entity pmt_readout_top is
+	generic (USE_IDELAY: std_logic := '0');
 	Port ( 
 		-- clks resets
 		clk_sp : in  STD_LOGIC; -- SPACIROC redout clock (80 MHz)
@@ -137,23 +138,53 @@ end; -- function reverse_any_vector
     signal x_data_pc_delayed: std_logic_vector(7 downto 0) := (others => '0');
     signal x_data_ki_delayed: std_logic := '0';
 
-	attribute IODELAY_GROUP : STRING;
-	attribute IODELAY_GROUP of IDELAYE2_inst: label is "IODELAY_GROUP";
-
+	-- if USE_IDELAY uncomment
+	--attribute IODELAY_GROUP : STRING;
+	--attribute IODELAY_GROUP of IDELAYE2_inst: label is "IODELAY_GROUP";
 
 begin
 
   clk <= clk_sp;
   clk_gtu_i <= clk_gtu;
 
-	-- IDELAY PART
-  idelay_gen: for i in 0 to 7 generate
-  
-  attribute IODELAY_GROUP : STRING;
-  attribute IODELAY_GROUP of IDELAYE2_inst: label is "IODELAY_GROUP";
-
-  begin  
-  
+	USE_IDELAY_gen: if(USE_IDELAY = '1') generate
+	
+	
+		-- IDELAY PART
+		idelay_gen: for i in 0 to 7 generate
+		
+		attribute IODELAY_GROUP : STRING;
+		attribute IODELAY_GROUP of IDELAYE2_inst: label is "IODELAY_GROUP";
+	
+		begin  
+		
+			IDELAYE2_inst : IDELAYE2
+				generic map (
+					 CINVCTRL_SEL => "FALSE",          -- Enable dynamic clock inversion (FALSE, TRUE)
+					 DELAY_SRC => "IDATAIN",           -- Delay input (IDATAIN, DATAIN)
+					 HIGH_PERFORMANCE_MODE => "FALSE", -- Reduced jitter ("TRUE"), Reduced power ("FALSE")
+					 IDELAY_TYPE => "VAR_LOAD",           -- FIXED, VARIABLE, VAR_LOAD, VAR_LOAD_PIPE
+					 IDELAY_VALUE => 0,                -- Input delay tap setting (0-31)
+					 PIPE_SEL => "FALSE",              -- Select pipelined mode, FALSE, TRUE
+					 REFCLK_FREQUENCY => 200.0,        -- IDELAYCTRL clock input frequency in MHz (190.0-210.0, 290.0-310.0).
+					 SIGNAL_PATTERN => "DATA"          -- DATA, CLOCK input signal
+				)
+				port map (
+					 CNTVALUEOUT => open, -- 5-bit output: Counter value output
+					 DATAOUT => x_data_pc_delayed(i),         -- 1-bit output: Delayed data output
+					 C => idelay_C,                     -- 1-bit input: Clock input
+					 CE => '0',                   -- 1-bit input: Active high enable increment/decrement input
+					 CINVCTRL => '0',       -- 1-bit input: Dynamic clock inversion input
+					 CNTVALUEIN => idelay_CNTVALUEIN,   -- 5-bit input: Counter value input
+					 DATAIN => '0',           -- 1-bit input: Internal delay data input
+					 IDATAIN => x_data_pc(i),         -- 1-bit input: Data input from the I/O
+					 INC => '0',                 -- 1-bit input: Increment / Decrement tap delay input
+					 LD => idelay_LD,                   -- 1-bit input: Load IDELAY_VALUE input
+					 LDPIPEEN => '0',       -- 1-bit input: Enable PIPELINE register to load data input
+					 REGRST => '0'            -- 1-bit input: Active-high reset tap-delay input
+				);	
+		end generate;
+		
 		IDELAYE2_inst : IDELAYE2
 			generic map (
 				 CINVCTRL_SEL => "FALSE",          -- Enable dynamic clock inversion (FALSE, TRUE)
@@ -167,45 +198,24 @@ begin
 			)
 			port map (
 				 CNTVALUEOUT => open, -- 5-bit output: Counter value output
-				 DATAOUT => x_data_pc_delayed(i),         -- 1-bit output: Delayed data output
+				 DATAOUT => x_data_ki_delayed,         -- 1-bit output: Delayed data output
 				 C => idelay_C,                     -- 1-bit input: Clock input
 				 CE => '0',                   -- 1-bit input: Active high enable increment/decrement input
 				 CINVCTRL => '0',       -- 1-bit input: Dynamic clock inversion input
 				 CNTVALUEIN => idelay_CNTVALUEIN,   -- 5-bit input: Counter value input
 				 DATAIN => '0',           -- 1-bit input: Internal delay data input
-				 IDATAIN => x_data_pc(i),         -- 1-bit input: Data input from the I/O
+				 IDATAIN => x_data_ki,         -- 1-bit input: Data input from the I/O
 				 INC => '0',                 -- 1-bit input: Increment / Decrement tap delay input
 				 LD => idelay_LD,                   -- 1-bit input: Load IDELAY_VALUE input
 				 LDPIPEEN => '0',       -- 1-bit input: Enable PIPELINE register to load data input
 				 REGRST => '0'            -- 1-bit input: Active-high reset tap-delay input
-			);	
+			);
 	end generate;
 	
-  IDELAYE2_inst : IDELAYE2
-		generic map (
-			 CINVCTRL_SEL => "FALSE",          -- Enable dynamic clock inversion (FALSE, TRUE)
-			 DELAY_SRC => "IDATAIN",           -- Delay input (IDATAIN, DATAIN)
-			 HIGH_PERFORMANCE_MODE => "FALSE", -- Reduced jitter ("TRUE"), Reduced power ("FALSE")
-			 IDELAY_TYPE => "VAR_LOAD",           -- FIXED, VARIABLE, VAR_LOAD, VAR_LOAD_PIPE
-			 IDELAY_VALUE => 0,                -- Input delay tap setting (0-31)
-			 PIPE_SEL => "FALSE",              -- Select pipelined mode, FALSE, TRUE
-			 REFCLK_FREQUENCY => 200.0,        -- IDELAYCTRL clock input frequency in MHz (190.0-210.0, 290.0-310.0).
-			 SIGNAL_PATTERN => "DATA"          -- DATA, CLOCK input signal
-		)
-		port map (
-			 CNTVALUEOUT => open, -- 5-bit output: Counter value output
-			 DATAOUT => x_data_ki_delayed,         -- 1-bit output: Delayed data output
-			 C => idelay_C,                     -- 1-bit input: Clock input
-			 CE => '0',                   -- 1-bit input: Active high enable increment/decrement input
-			 CINVCTRL => '0',       -- 1-bit input: Dynamic clock inversion input
-			 CNTVALUEIN => idelay_CNTVALUEIN,   -- 5-bit input: Counter value input
-			 DATAIN => '0',           -- 1-bit input: Internal delay data input
-			 IDATAIN => x_data_ki,         -- 1-bit input: Data input from the I/O
-			 INC => '0',                 -- 1-bit input: Increment / Decrement tap delay input
-			 LD => idelay_LD,                   -- 1-bit input: Load IDELAY_VALUE input
-			 LDPIPEEN => '0',       -- 1-bit input: Enable PIPELINE register to load data input
-			 REGRST => '0'            -- 1-bit input: Active-high reset tap-delay input
-		);
+	USE_IDELAY_gen2: if(USE_IDELAY = '0') generate
+		x_data_pc_delayed <= x_data_pc;
+		x_data_ki_delayed <= x_data_ki;
+	end generate;
 
 	-- Readout
 	x_data_pc_d1 <= x_data_pc_delayed when rising_edge(clk);
