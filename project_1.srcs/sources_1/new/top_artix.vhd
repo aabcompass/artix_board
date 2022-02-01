@@ -310,20 +310,23 @@ begin
 
 	clk_wiz_div10_rst <= not locked_clk_ec;
 
-	i_clk_wiz : clk_wiz_div10
-   port map ( 
-    -- Clock in ports
-    clk_in_pri => clk_hf,
-    reset => clk_wiz_div10_rst,
-    -- Clock out ports  
-    clk_200MHz => clk_200MHz,--clk_ec,
-    clk_100MHz => open, --clk_hf,
-    clk_serdes => clk_serdes,
-    clk_serdes_shifted => clk_serdes_shifted,
-    -- Status and control signals                
-    locked => locked_i            
- );
-	
+--	i_clk_wiz : clk_wiz_div10
+--   port map ( 
+--    -- Clock in ports
+--    clk_in_pri => clk_hf,
+--    reset => clk_wiz_div10_rst,
+--    -- Clock out ports  
+--    clk_200MHz => clk_200MHz,--clk_ec,
+--    clk_100MHz => open, --clk_hf,
+--    clk_serdes => clk_serdes,
+--    clk_serdes_shifted => clk_serdes_shifted,
+--    -- Status and control signals                
+--    locked => locked_i            
+-- );
+	clk_200MHz <= clk_ec;
+	clk_serdes <= clk_ec_serdes;
+	clk_serdes_shifted <= clk_ec_serdes;
+	locked_i <= locked_clk_ec;
 		
 	locked_ec_d1 <= locked_clk_ec when rising_edge(clk_ec);
 	locked_ec_d2 <= locked_clk_ec when rising_edge(clk_ec);

@@ -208,6 +208,7 @@
     <FileSet Name="clk_wiz_div10" Type="BlockSrcs" RelSrcDir="$PSRCDIR/clk_wiz_div10">
       <File Path="$PSRCDIR/sources_1/ip/clk_wiz_div10/clk_wiz_div10.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
