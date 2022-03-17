@@ -126,6 +126,13 @@ end; -- function reverse_any_vector
     
     signal dataout_unmapped : std_logic_vector(511 downto 0)  := (others => '0');
     signal dataout_ki_unmapped : std_logic_vector(63 downto 0)  := (others => '0');
+    signal dataout_ki_unmapped_binary : std_logic_vector(63 downto 0)  := (others => '0');
+    
+		component gray2bin_async is
+        Port ( 
+    			datain : in STD_LOGIC_VECTOR (5 downto 0);
+    			dataout : out STD_LOGIC_VECTOR (5 downto 0));
+    end component;    
     
     attribute keep : string;
     attribute keep of x_data_pc_d1 : signal is "true";
@@ -134,6 +141,7 @@ end; -- function reverse_any_vector
     attribute keep of readout_process_state : signal is "true";
     attribute keep of readout_channels_ki_gray : signal is "true";
     attribute keep of dataout_ki_unmapped : signal is "true";
+    attribute keep of dataout_ki_unmapped_binary : signal is "true";
     
     signal x_data_pc_delayed: std_logic_vector(7 downto 0) := (others => '0');
     signal x_data_ki_delayed: std_logic := '0';
@@ -298,6 +306,7 @@ begin
 			end if;
 		end if;
 	end process;
+
 	
 	-- gray2bin has a 2 clk latency
 	inst_gray2bin_gen: for i in 0 to 7 generate
@@ -413,15 +422,21 @@ begin
 	
 --	dataout(512+64-1 downto 512) <= dataout_ki_unmapped; 
 	
-	dataout(512+64-1 downto 512) <= 
-		  "000000" & dataout_ki_unmapped(63 downto 62)
-		& "00" & dataout_ki_unmapped(61 downto 56)
-		& "00" & dataout_ki_unmapped(55 downto 50)
-		& "00" & dataout_ki_unmapped(49 downto 44) 
-		& "00" & dataout_ki_unmapped(43 downto 38) 
-		& "00" & dataout_ki_unmapped(37 downto 32)
-		& "00" & dataout_ki_unmapped(31 downto 26) 
-		& "00" & dataout_ki_unmapped(25 downto 20);
+	gray2bin_ki_gen: for i in 0 to 7 generate
+		gray2bin_ki: gray2bin_async port map (dataout_ki_unmapped(63-i*6 downto 58-i*6), dataout_ki_unmapped_binary(61-i*8 downto 56-i*8));
+	end generate;
+
+	dataout(512+64-1 downto 512) <= dataout_ki_unmapped_binary;
+	
+--	dataout(512+64-1 downto 512) <= 
+--		  "000000" & dataout_ki_unmapped(63 downto 62)
+--		& "00" & dataout_ki_unmapped(61 downto 56)
+--		& "00" & dataout_ki_unmapped(55 downto 50)
+--		& "00" & dataout_ki_unmapped(49 downto 44) 
+--		& "00" & dataout_ki_unmapped(43 downto 38) 
+--		& "00" & dataout_ki_unmapped(37 downto 32)
+--		& "00" & dataout_ki_unmapped(31 downto 26) 
+--		& "00" & dataout_ki_unmapped(25 downto 20);
 
 --	dataout(512+64-1 downto 512) <= 
 --		  "00" & reverse_any_vector(dataout_ki_unmapped(5+6*7+16 downto 0+6*7+16))

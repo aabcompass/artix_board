@@ -61,20 +61,6 @@ architecture Behavioral of gray2bin is
 	
 begin
 
--- before 26Sep2017
-
---	arg1 <= (datain and X"88") when rising_edge(clk);
---	arg2 <= (datain and X"CC") when rising_edge(clk);
---	arg3 <= (datain and X"EE") when rising_edge(clk);
---	datain_d1 <= datain when rising_edge(clk);
-
---	--dataout <= datain_d1 xor ("000" & arg1(4 downto 0)) xor ("00" & arg2(5 downto 0)) xor ("0" & arg3(6 downto 0)) when rising_edge(clk);
---	dataout <= datain_d1 xor ("000" & arg1(7 downto 3)) xor ("00" & arg2(7 downto 2)) xor ("0" & arg3(7 downto 1)) when rising_edge(clk);
---	datain_dv_d1 <= datain_dv when rising_edge(clk);
---	dataout_dv <= datain_dv_d1 when rising_edge(clk);
-
--- after 26Sep2017
-	
 	g <= datain;
 	
 	b(7)<= g(7) when rising_edge(clk);	
